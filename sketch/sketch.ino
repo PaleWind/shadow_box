@@ -44,13 +44,13 @@ void setup()
 
 void loop()
 {
+  //sb.circle(strip1, num_leds1);
   MIDI.read();
   sb.setBPM();
-  //call method group. add to it on note-on and remove on note-off
+  //map a method group. add to it on note-on and remove on note-off
   //methodgroup.run
   if (noteHold > 0)
   {
-    Serial.write("holding ");
     sb.circle(strip1, num_leds1);
   }      
 }
@@ -58,10 +58,10 @@ void loop()
 void handleNoteOn(byte channel, byte note, byte velocity)
 {
   noteHold = 1;
-  sb.routeMIDI(strip1, num_leds1, channel, note, velocity);
+  //sb.routeMIDI(strip1, num_leds1, channel, note, velocity);
   digitalWrite(LED_BUILTIN, 1);
   Serial.write("ON: ");
-  //    Serial.write("channel: "); Serial.write(channel);
+   //    Serial.write("channel: "); Serial.write(channel);
   Serial.write(" note: "); Serial.write(note);
   //    Serial.write(" velocity: "); Serial.write(velocity);
     if (note == 'C')

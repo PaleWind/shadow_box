@@ -56,10 +56,12 @@ void shadowBox::routeMIDI(struct CRGB *strip, int numLeds, byte channel, byte no
 
 void shadowBox::circle(struct CRGB *strip, int numLeds)
 {
-    uint8_t sawBeat = beat8(30);
+    //variable = (condition) ? expressionTrue : expressionFalse;
+    int bpm = BPM > 0 ? BPM / 2 : 30;
+    uint8_t sawBeat = beat8(bpm);
     //map sinBeat to # of leds
     int wave = map(sawBeat, 0, 255, 0, numLeds - 1);
-    //Serial.println(wave);
+    Serial.println(wave);
     strip[wave] = CRGB::White;
     //pauls a genius
     FastLED.show();
