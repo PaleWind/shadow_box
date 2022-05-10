@@ -14,6 +14,14 @@ volatile long lastTapTime = 0;
 volatile long timesTapped = 0;
 long avgTapInterval = (lastTapTime - firstTapTime) / (timesTapped - 1);
 int BPM;
+// std::map<std::string, FnPtr> functionMap;
+// functionMap[] = circle;
+
+// void setFunctionMap()
+// {
+
+// }
+
 
 void shadowBox::setBPM()
 {
@@ -33,12 +41,23 @@ void shadowBox::setBPM()
     }
 }
 
-void shadowBox::routeMIDI(struct CRGB *strip, int numLeds, byte channel, byte note, byte velocity)
+void shadowBox::routeMIDI(struct CRGB *strip, int numLeds, Note note, byte velocity = 0)
 {
-    if (note == 'C')
+    if (note == Fs8)
     {
-        circle(strip, numLeds);
-
+        fill_solid(strip, numLeds, CRGB::Blue);
+        FastLED.show();
+    }
+    if (note == F8)
+    {
+        fill_solid(strip, numLeds, CRGB::Red);
+        FastLED.show();
+    }
+    if (note == E8)
+    {
+        fill_solid(strip, numLeds, CRGB::Green);
+        FastLED.show();
+    }
     // }
     // else if (velocity > 70)
     // {
@@ -51,7 +70,7 @@ void shadowBox::routeMIDI(struct CRGB *strip, int numLeds, byte channel, byte no
     // else
     // {
     //     fill_solid(strip, numLeds, CRGB::Red);
-     }
+     
 }
 
 void shadowBox::circle(struct CRGB *strip, int numLeds)
@@ -61,7 +80,7 @@ void shadowBox::circle(struct CRGB *strip, int numLeds)
     uint8_t sawBeat = beat8(bpm);
     //map sinBeat to # of leds
     int wave = map(sawBeat, 0, 255, 0, numLeds - 1);
-    Serial.println(wave);
+    //Serial.println(wave);
     strip[wave] = CRGB::White;
     //pauls a genius
     FastLED.show();
@@ -82,10 +101,13 @@ void shadowBox::circleBPM(struct CRGB *strip, int numLeds)
 
 void shadowBox::tapInput() 
 {
-  long now = micros();
-  if (timesTapped == 0) {
+    long now = micros();
+    if (timesTapped == 0) {
     firstTapTime = now;
-  }
-  timesTapped++;
-  lastTapTime = now;
+    }
+    timesTapped++;
+    lastTapTime = now;
 }
+
+
+

@@ -43,7 +43,7 @@ void setup()
   Serial.begin(9600);
   //Serial2.begin(31250, SERIAL_8N1, rx2, tx2);
   
-  Pzemserial.begin(31250, SERIAL_8N1, rx2, tx2);
+  Pzemserial.begin(31250, SERIAL_8N1, MIDI_PIN, tx2);
   
 //FastLED
   FastLED.addLeds<WS2812B, pin1, GRB>(strip1, num_leds1);

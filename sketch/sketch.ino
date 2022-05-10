@@ -1,12 +1,13 @@
 #include <FastLED.h>
 #include <MIDI.h>
 #include "shadowBox.h"
+#include <vector>
 
 #define LED_BUILTIN 2
-#define rx2 16 //receive midi
-#define tx2 17
-#define pin1 23
-#define pin2 22
+#define MIDI_PIN 16 //rx2, receive midi
+#define tx2 17 // future midi out/thru 
+#define LED_PIN1 23
+#define LED_PIN2 22
 
 static uint8_t  ticks = 0; //midi ticks per quarter note
 
@@ -20,18 +21,18 @@ CRGB strip1 [num_leds1];
 CRGB strip2 [num_leds2];
 shadowBox sb;
 
-int noteHold = 0;
+std::vector<Note> heldNotes;
 
 void setup()
 {
   //Pins
   pinMode(LED_BUILTIN, OUTPUT);
   Serial.begin(9600);
-  Serial2.begin(31250, SERIAL_8N1, rx2, tx2);
+  Serial2.begin(31250, SERIAL_8N1, MIDI_PIN, tx2);
 
   //FastLED
-  FastLED.addLeds<WS2812B, pin1, GRB>(strip1, num_leds1);
-  FastLED.addLeds<WS2812B, pin2, GRB>(strip2, num_leds2);
+  FastLED.addLeds<WS2812B, LED_PIN1, GRB>(strip1, num_leds1);
+  FastLED.addLeds<WS2812B, LED_PIN2, GRB>(strip2, num_leds2);
   FastLED.setBrightness(40);
 
   //MIDI
@@ -44,54 +45,42 @@ void setup()
 
 void loop()
 {
-  //sb.circle(strip1, num_leds1);
-  MIDI.read();
-  sb.setBPM();
-  //map a method group. add to it on note-on and remove on note-off
+    //map a method group. add to it on note-on and remove on note-off
   //methodgroup.run
-  if (noteHold > 0)
+  
+  for (int i=0;i<heldNotes.size();i++)
   {
-    sb.circle(strip1, num_leds1);
-  }      
+    sb.routeMIDI(strip1, num_leds1, heldNotes[i], 0);
+  }
+    // for_each(heldNotes.begin(), arr1.end(), printx2);
+    // sb.routeMIDI(strip1, num_leds1, heldNotes, 0);
+ 
+  MIDI.read();
+  sb.setBPM();        
 }
 
 void handleNoteOn(byte channel, byte note, byte velocity)
 {
-  noteHold = 1;
+  heldNotes.push_back((Note)note);
   //sb.routeMIDI(strip1, num_leds1, channel, note, velocity);
   digitalWrite(LED_BUILTIN, 1);
   Serial.write("ON: ");
    //    Serial.write("channel: "); Serial.write(channel);
-  Serial.write(" note: "); Serial.write(note);
+  Serial.write(" note: "); Serial.write(note); Serial.write(' ');
+  Serial.print(note); Serial.write(' ');
   //    Serial.write(" velocity: "); Serial.write(velocity);
-    if (note == 'C')
-    {
-      // while (noteHold > 0)
-      // {
 
-      // }
-    }
-    // else if (velocity > 70)
-    // {
-    //     fill_solid(strip1, num_leds1, CRGB::Blue);
-    // }
-    // else if (velocity < 71)
-    // {
-    //     fill_solid(strip1, num_leds1, CRGB::Green);
-    // }
-    // else
-    // {
-    //     fill_solid(strip1, num_leds1, CRGB::Red);
-    // }
 }
 
 void handleNoteOff(byte channel, byte note, byte velocity)
 {
-  noteHold = 0;
+  auto noteHeld = std::find(heldNotes.begin(),heldNotes.end(), note);
+  if (noteHeld != heldNotes.end()) {
+    heldNotes.erase(noteHeld);
+  }
+
   digitalWrite(LED_BUILTIN, 0);
-    Serial.write("Off: ");
-  //    Serial.write("channel: "); Serial.write(channel);
-    //Serial.write(" note: " + note + ' ');
+    Serial.write("Off: "); Serial.write(note); Serial.println(' ');
   //    Serial.write(" velocity: "); Serial.write(velocity);
 
   fill_solid(strip1, num_leds1, CRGB::Black);
