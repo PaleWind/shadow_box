@@ -3,6 +3,21 @@
 
 using namespace std;
 
+//attempt to setup fastled in here
+// #define LED_PIN1 23
+// #define LED_PIN2 22
+// #define num_leds1 165
+// #define num_leds2 14
+int LED_PIN1 = 23;
+int LED_PIN2 = 22;
+int num_leds1 = 165;
+int num_leds2 = 14;
+CRGB strip1 [num_leds1];
+CRGB strip2 [num_leds2];
+// FastLED.addLeds<WS2812B, LED_PIN1, GRB>(strip1, num_leds1);
+// FastLED.addLeds<WS2812B, LED_PIN2, GRB>(strip2, num_leds2);
+FastLED.setBrightness(40);
+
 // BPM related variables
 #define MINIMUM_BPM 400 // Used for debouncing
 #define MAXIMUM_BPM 3000 // Used for debouncing
@@ -41,43 +56,39 @@ void shadowBox::setBPM()
     }
 }
 
-void shadowBox::routeMIDI(struct CRGB *strip, int numLeds, Note note, byte velocity = 0)
+void shadowBox::routeMIDI(Note note, byte velocity = 0)
 {
     if (note == Fs8)
     {
-        fill_solid(strip, numLeds, CRGB::Blue);
+        fill_solid(strip1, num_leds1, CRGB::Blue);
         FastLED.show();
     }
     if (note == F8)
     {
-        fill_solid(strip, numLeds, CRGB::Red);
+        fill_solid(strip1, num_leds1, CRGB::Red);
         FastLED.show();
     }
     if (note == E8)
     {
-        fill_solid(strip, numLeds, CRGB::Green);
+        fill_solid(strip1, num_leds1, CRGB::Green);
         FastLED.show();
     }
-    // }
-    // else if (velocity > 70)
-    // {
-    //     fill_solid(strip, numLeds, CRGB::Blue);
-    // }
-    // else if (velocity < 71)
-    // {
-    //     fill_solid(strip, numLeds, CRGB::Green);
-    // }
-    // else
-    // {
-    //     fill_solid(strip, numLeds, CRGB::Red);
-     
+    if (note == Ds8)
+    {
+        circle(strip1, num_leds1);
+    }
+}
+
+clearStrip()
+{
+    fill_solid(strip1, num_leds1, CRGB::Black);
+    fill_solid(strip2, num_leds2, CRGB::Black);
 }
 
 void shadowBox::circle(struct CRGB *strip, int numLeds)
 {
-    //variable = (condition) ? expressionTrue : expressionFalse;
-    int bpm = BPM > 0 ? BPM / 2 : 30;
-    uint8_t sawBeat = beat8(bpm);
+    //int bpm = BPM > 0 ? BPM / 2 : 30;
+    uint8_t sawBeat = beat8(BPM > 0 ? BPM / 2 : 30);
     //map sinBeat to # of leds
     int wave = map(sawBeat, 0, 255, 0, numLeds - 1);
     //Serial.println(wave);

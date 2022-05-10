@@ -22,10 +22,29 @@
     {
         public:
             int BPM;
+            int LED_PIN1 = 23;
+            int LED_PIN2 = 22;
+            int num_leds1 = 165;
+            int num_leds2 = 14;
+            CRGB strip1 [];
+            CRGB strip2 [];
 
             void setBPM();
             void routeMIDI(struct CRGB *strip, int numLeds, Note note, byte velocity);
             void circle(struct CRGB *strip, int numLeds);
             void circleBPM(struct CRGB *strip, int numLeds);
             void tapInput();
+
+            shadowBox()
+            {
+                // Foo foo[3];
+                CRGB strip1[num_leds1];
+                CRGB strip2[num_leds2];
+            }
     };
+
+
+// #define LED_PIN1 23
+// #define LED_PIN2 22
+// #define num_leds1 165
+// #define num_leds2 14
