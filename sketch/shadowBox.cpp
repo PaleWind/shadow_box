@@ -3,20 +3,11 @@
 
 using namespace std;
 
-//attempt to setup fastled in here
-// #define LED_PIN1 23
-// #define LED_PIN2 22
-// #define num_leds1 165
-// #define num_leds2 14
-int LED_PIN1 = 23;
-int LED_PIN2 = 22;
-int num_leds1 = 165;
-int num_leds2 = 14;
+#define num_leds1 165
+#define num_leds2 19
 CRGB strip1 [num_leds1];
 CRGB strip2 [num_leds2];
-// FastLED.addLeds<WS2812B, LED_PIN1, GRB>(strip1, num_leds1);
-// FastLED.addLeds<WS2812B, LED_PIN2, GRB>(strip2, num_leds2);
-FastLED.setBrightness(40);
+
 
 // BPM related variables
 #define MINIMUM_BPM 400 // Used for debouncing
@@ -29,14 +20,13 @@ volatile long lastTapTime = 0;
 volatile long timesTapped = 0;
 long avgTapInterval = (lastTapTime - firstTapTime) / (timesTapped - 1);
 int BPM;
-// std::map<std::string, FnPtr> functionMap;
-// functionMap[] = circle;
+// std::map<std::string, FnPtr> functionMap; ?????
+// functionMap[] = circle; ????
 
-// void setFunctionMap()
+// void setFunctionMap() ?????
 // {
-
+//                PROBLY NOT
 // }
-
 
 void shadowBox::setBPM()
 {
@@ -44,7 +34,6 @@ void shadowBox::setBPM()
     if (timesTapped > 0 && timesTapped < 3 && (now - lastTapTime) > maximumTapInterval)
     {
         // Single taps, not enough to calculate a BPM -> ignore!
-        //    Serial.println("Ignoring lone taps!");
         timesTapped = 0;
     }
     else if (timesTapped >= 3)
@@ -56,34 +45,83 @@ void shadowBox::setBPM()
     }
 }
 
-void shadowBox::routeMIDI(Note note, byte velocity = 0)
+void shadowBox::routeMIDI(int note, byte velocity = 0)
 {
-    if (note == Fs8)
+    // strip 1: 1-12
+    if (note == 1)
     {
         fill_solid(strip1, num_leds1, CRGB::Blue);
         FastLED.show();
     }
-    if (note == F8)
+    if (note == 2)
     {
         fill_solid(strip1, num_leds1, CRGB::Red);
         FastLED.show();
     }
-    if (note == E8)
+    if (note == 3)
     {
         fill_solid(strip1, num_leds1, CRGB::Green);
         FastLED.show();
     }
-    if (note == Ds8)
+    if (note == 4)
+    {
+        fill_solid(strip1, num_leds1, CRGB::White);
+        FastLED.show();
+    }
+    if (note == 5)
     {
         circle(strip1, num_leds1);
     }
+
+    // strip 2: 13-24
+    if (note == 13)
+    {
+        fill_solid(strip2, num_leds2, CRGB::Blue);
+        FastLED.show();
+    }
+    if (note == 14)
+    {
+        fill_solid(strip2, num_leds2, CRGB::Red);
+        FastLED.show();
+    }
+    if (note == 15)
+    {
+        fill_solid(strip2, num_leds2, CRGB::Green);
+        FastLED.show();
+    }
+    if (note == 16)
+    {
+        fill_solid(strip2, num_leds2, CRGB::White);
+        FastLED.show();
+    }
+    if (note == 17)
+    {
+        circle(strip2, num_leds2);
+    }
 }
 
-clearStrip()
+void shadowBox::clearStrip(byte note)
 {
-    fill_solid(strip1, num_leds1, CRGB::Black);
-    fill_solid(strip2, num_leds2, CRGB::Black);
+        if (note > -1 && note < 13) { fill_solid(strip1, num_leds1, CRGB::Black); }//1-12 *strip 1
+   else if (note > 12 && note < 25) { fill_solid(strip2, num_leds2, CRGB::Black); }//13-24 *strip 2
+   else if (note > 24 && note < 37) { fill_solid(strip2, num_leds2, CRGB::Black); }//25-36 *strip 3
+   else if (note > 36 && note < 49) { fill_solid(strip2, num_leds2, CRGB::Black); }//37-48 *strip 4
+   else if (note > 48 && note < 61) { fill_solid(strip2, num_leds2, CRGB::Black); }//49-60 *strip 5
+   else if (note > 60 && note < 73) { fill_solid(strip2, num_leds2, CRGB::Black); }//61-72 *strip 6
+   else if (note > 72 && note < 85) { fill_solid(strip2, num_leds2, CRGB::Black); }//73-84 *strip 7
+   else if (note > 84 && note < 96) { fill_solid(strip2, num_leds2, CRGB::Black); }//85-96 *strip 8    
+    
+    FastLED.show();
 }
+
+// void blackOut()
+// {
+//     for(auto strip : allStrips)
+//     {
+//         fill_solid(strip, num_leds1, CRGB::Black);
+//     }
+// }
+
 
 void shadowBox::circle(struct CRGB *strip, int numLeds)
 {

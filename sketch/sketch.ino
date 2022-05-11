@@ -6,8 +6,8 @@
 #define LED_BUILTIN 2
 #define MIDI_PIN 16 //rx2, receive midi
 #define tx2 17 // future midi out/thru 
-// #define LED_PIN1 23
-// #define LED_PIN2 22
+#define LED_PIN1 23
+#define LED_PIN2 22
 
 static uint8_t  ticks = 0; //midi ticks per quarter note
 
@@ -15,13 +15,13 @@ static uint8_t  ticks = 0; //midi ticks per quarter note
 MIDI_CREATE_INSTANCE(HardwareSerial, Serial2,  MIDI);
 
 // Strips setup
-// #define num_leds1 165
+ #define strip_leds 165
 // #define num_leds2 14
 // CRGB strip1 [num_leds1];
 // CRGB strip2 [num_leds2];
 shadowBox sb;
 
-std::vector<Note> heldNotes;
+std::vector<int> heldNotes;
 
 void setup()
 {
@@ -31,9 +31,9 @@ void setup()
   Serial2.begin(31250, SERIAL_8N1, MIDI_PIN, tx2);
 
   //FastLED
-   FastLED.addLeds<WS2812B, LED_PIN1, GRB>(sb.strip1, num_leds1);
-  // FastLED.addLeds<WS2812B, LED_PIN2, GRB>(strip2, num_leds2);
-  // FastLED.setBrightness(40);
+  FastLED.addLeds<WS2812B, LED_PIN1, GRB>(sb.strip1, strip_leds);
+  FastLED.addLeds<WS2812B, LED_PIN2, GRB>(sb.strip2, 19);
+  FastLED.setBrightness(40);
 
   //MIDI
   MIDI.begin(MIDI_CHANNEL_OMNI);
@@ -59,11 +59,11 @@ void loop()
 
 void handleNoteOn(byte channel, byte note, byte velocity)
 {
-  heldNotes.push_back((Note)note);
+  //NoteNum note1 = (NoteNum)note;
+  heldNotes.push_back((int)note);
   digitalWrite(LED_BUILTIN, 1);
-  Serial.write("ON: ");
-  Serial.write(" note: "); Serial.write(note); Serial.write(' ');
-  Serial.print(note); Serial.write(' ');
+  // Serial.write("ON: ");
+  // Serial.write(" note: "); Serial.write(note); Serial.write(' ');
   //    Serial.write(" velocity: "); Serial.write(velocity);
 
 }
@@ -76,13 +76,13 @@ void handleNoteOff(byte channel, byte note, byte velocity)
   }
 
   digitalWrite(LED_BUILTIN, 0);
-  Serial.write("Off: "); Serial.write(note); Serial.println(' ');
+  //Serial.write("Off: "); Serial.println(' ');
   //    Serial.write(" velocity: "); Serial.write(velocity);
 
-  clearStrip();
+  sb.clearStrip(note);
   // fill_solid(strip1, num_leds1, CRGB::Black);
   // fill_solid(strip2, num_leds2, CRGB::Black);
-  FastLED.show();
+ // FastLED.show();
 }
 
 void handleClock()
