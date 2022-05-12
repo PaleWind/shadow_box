@@ -29,7 +29,7 @@ int BPM;
 // }
 
 void shadowBox::setBPM()
-{
+{  
     long now = micros();
     if (timesTapped > 0 && timesTapped < 3 && (now - lastTapTime) > maximumTapInterval)
     {
@@ -45,71 +45,114 @@ void shadowBox::setBPM()
     }
 }
 
-void shadowBox::routeMIDI(int note, byte velocity = 0)
+void shadowBox::routeMIDI(byte byteNote, byte velocity)
 {
+    int note = (int)byteNote;
     // strip 1: 1-12
-    if (note == 1)
+    switch (note)
     {
+    case 1:
         fill_solid(strip1, num_leds1, CRGB::Blue);
         FastLED.show();
-    }
-    if (note == 2)
-    {
+        break;
+    
+    case 2:
         fill_solid(strip1, num_leds1, CRGB::Red);
         FastLED.show();
-    }
-    if (note == 3)
-    {
-        fill_solid(strip1, num_leds1, CRGB::Green);
+        break;
+
+    case 3:
+        fill_solid(strip1, num_leds2, CRGB::Green);
         FastLED.show();
-    }
-    if (note == 4)
-    {
+        break;
+    
+    case 4:
         fill_solid(strip1, num_leds1, CRGB::White);
         FastLED.show();
-    }
-    if (note == 5)
-    {
-        circle(strip1, num_leds1);
-    }
+        break;
 
-    // strip 2: 13-24
-    if (note == 13)
-    {
+    // strip 2: 13-24   
+    case 13:
         fill_solid(strip2, num_leds2, CRGB::Blue);
         FastLED.show();
-    }
-    if (note == 14)
-    {
+        break;
+    
+    case 14:
         fill_solid(strip2, num_leds2, CRGB::Red);
         FastLED.show();
-    }
-    if (note == 15)
-    {
+        break;
+
+    case 15:
         fill_solid(strip2, num_leds2, CRGB::Green);
         FastLED.show();
-    }
-    if (note == 16)
-    {
+        break;
+    
+    case 16:
         fill_solid(strip2, num_leds2, CRGB::White);
         FastLED.show();
+        break;
+    default:
+        break;
     }
-    if (note == 17)
-    {
-        circle(strip2, num_leds2);
-    }
+
+    // else if (note == 2)
+    // {
+    //     fill_solid(strip1, num_leds1, CRGB::Red);
+    //     FastLED.show();
+    // }
+    // else if (note == 3)
+    // {
+    //     fill_solid(strip1, num_leds1, CRGB::Green);
+    //     FastLED.show();
+    // }
+    // else if (note == 4)
+    // {
+    //     fill_solid(strip1, num_leds1, CRGB::White);
+    //     FastLED.show();
+    // }
+    // else if (note == 5)
+    // {
+    //     //circle(strip1, num_leds1);
+    // }
+
+    // // strip 2: 13-24
+    // else if (note == 13)
+    // {
+    //     fill_solid(strip2, num_leds2, CRGB::Blue);
+    //     FastLED.show();
+    // }
+    // else if (note == 14)
+    // {
+    //     fill_solid(strip2, num_leds2, CRGB::Red);
+    //     FastLED.show();
+    // }
+    // else if (note == 15)
+    // {
+    //     fill_solid(strip2, num_leds2, CRGB::Green);
+    //     FastLED.show();
+    // }
+    // else if (note == 16)
+    // {
+    //     fill_solid(strip2, num_leds2, CRGB::White);
+    //     FastLED.show();
+    // }
+    // else if (note == 17)
+    // {
+    //     //circle(strip2, num_leds2);
+    // }
 }
 
-void shadowBox::clearStrip(byte note)
+void shadowBox::clearStrip(byte byteNote)
 {
+    int note = (int)byteNote;
         if (note > -1 && note < 13) { fill_solid(strip1, num_leds1, CRGB::Black); }//1-12 *strip 1
    else if (note > 12 && note < 25) { fill_solid(strip2, num_leds2, CRGB::Black); }//13-24 *strip 2
-   else if (note > 24 && note < 37) { fill_solid(strip2, num_leds2, CRGB::Black); }//25-36 *strip 3
-   else if (note > 36 && note < 49) { fill_solid(strip2, num_leds2, CRGB::Black); }//37-48 *strip 4
-   else if (note > 48 && note < 61) { fill_solid(strip2, num_leds2, CRGB::Black); }//49-60 *strip 5
-   else if (note > 60 && note < 73) { fill_solid(strip2, num_leds2, CRGB::Black); }//61-72 *strip 6
-   else if (note > 72 && note < 85) { fill_solid(strip2, num_leds2, CRGB::Black); }//73-84 *strip 7
-   else if (note > 84 && note < 96) { fill_solid(strip2, num_leds2, CRGB::Black); }//85-96 *strip 8    
+//    else if (note > 24 && note < 37) { fill_solid(strip2, num_leds2, CRGB::Black); }//25-36 *strip 3
+//    else if (note > 36 && note < 49) { fill_solid(strip2, num_leds2, CRGB::Black); }//37-48 *strip 4
+//    else if (note > 48 && note < 61) { fill_solid(strip2, num_leds2, CRGB::Black); }//49-60 *strip 5
+//    else if (note > 60 && note < 73) { fill_solid(strip2, num_leds2, CRGB::Black); }//61-72 *strip 6
+//    else if (note > 72 && note < 85) { fill_solid(strip2, num_leds2, CRGB::Black); }//73-84 *strip 7
+//    else if (note > 84 && note < 96) { fill_solid(strip2, num_leds2, CRGB::Black); }//85-96 *strip 8    
     
     FastLED.show();
 }
@@ -133,7 +176,7 @@ void shadowBox::circle(struct CRGB *strip, int numLeds)
     strip[wave] = CRGB::White;
     //pauls a genius
     FastLED.show();
-    fadeToBlackBy(strip, numLeds, 2);
+    fadeToBlackBy(strip, numLeds, 20);
 }
 
 void shadowBox::circleBPM(struct CRGB *strip, int numLeds)
@@ -145,7 +188,7 @@ void shadowBox::circleBPM(struct CRGB *strip, int numLeds)
     strip[wave] = CRGB::White;
     
     //FastLED.show();
-    fadeToBlackBy(strip, numLeds, 10);
+    fadeToBlackBy(strip, numLeds, 200);
 }
 
 void shadowBox::tapInput() 
@@ -157,6 +200,3 @@ void shadowBox::tapInput()
     timesTapped++;
     lastTapTime = now;
 }
-
-
-
