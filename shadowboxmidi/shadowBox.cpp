@@ -20,13 +20,6 @@ volatile long lastTapTime = 0;
 volatile long timesTapped = 0;
 long avgTapInterval = (lastTapTime - firstTapTime) / (timesTapped - 1);
 int BPM;
-// std::map<std::string, FnPtr> functionMap; ?????
-// functionMap[] = circle; ????
-
-// void setFunctionMap() ?????
-// {
-//                PROBLY NOT
-// }
 
 void shadowBox::setBPM()
 {  
@@ -40,7 +33,7 @@ void shadowBox::setBPM()
     {
         long avgTapInterval = (lastTapTime - firstTapTime) / (timesTapped - 1);
         long temp = (60L * 1000 * 1000 * 10 / avgTapInterval) * 0.1f;
-        shadowBox::BPM = std::round(temp);
+        shadowBox::BPM = std::round(temp) / 2;
         timesTapped = 0;
     }
 }

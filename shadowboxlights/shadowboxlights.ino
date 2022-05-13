@@ -6,13 +6,16 @@
 #define LED_BUILTIN 2
 #define LED_PIN1 23
 #define LED_PIN2 22
-#define OUT_PIN 21
+#define LED_PIN3 21
 #define num_leds1 165
 #define num_leds2 19
+#define num_leds3 19
 
 std::vector<uint8_t> heldNotes; 
+
 CRGB strip1[num_leds1];
 CRGB strip2[num_leds2];
+CRGB strip3[num_leds3];
 
 void setup()
 {
@@ -23,6 +26,7 @@ void setup()
   
   FastLED.addLeds<WS2812B, LED_PIN1, GRB>(strip1, num_leds1);
   FastLED.addLeds<WS2812B, LED_PIN2, GRB>(strip2, num_leds2);
+  FastLED.addLeds<WS2812B, LED_PIN3, GRB>(strip3, num_leds3);
   FastLED.setBrightness(40);
 }
 
@@ -61,67 +65,106 @@ void readNotes()
 void routeMIDI(int note, int velocity)
 {
   // strip 1: 1-12
-  switch (note)
+  if (note > -1 && note < 13)
   {
-  case 1:
-    fill_solid(strip1, num_leds1, CRGB::Blue);
-    FastLED.show();
-    break;
-  
-  case 2:
-    fill_solid(strip1, num_leds1, CRGB::Red);
-    FastLED.show();
-    break;
+    switch (note)
+    {
+    case 1:
+      fill_solid(strip1, num_leds1, CRGB::Blue);
+      FastLED.show();
+      break;
+    
+    case 2:
+      fill_solid(strip1, num_leds1, CRGB::Red);
+      FastLED.show();
+      break;
 
-  case 3:
-    fill_solid(strip1, num_leds1, CRGB::Green);
-    FastLED.show();
-    break;
+    case 3:
+      fill_solid(strip1, num_leds1, CRGB::Green);
+      FastLED.show();
+      break;
 
-  case 4:
-    fill_solid(strip1, num_leds1, CRGB::White);
-    FastLED.show();
-    break;
+    case 4:
+      fill_solid(strip1, num_leds1, CRGB::White);
+      FastLED.show();
+      break;
 
-  case 5:
-    circle(strip1, num_leds1);
-    break;
-
-  // strip 2: 13-24   
-  case 13:
-    fill_solid(strip2, num_leds2, CRGB::Blue);
-    FastLED.show();
-    break;
-
-  case 14:
-    fill_solid(strip2, num_leds2, CRGB::Red);
-    FastLED.show();
-    break;
-
-  case 15:
-    fill_solid(strip2, num_leds2, CRGB::Green);
-    FastLED.show();
-    break;
-
-  case 16:
-    fill_solid(strip2, num_leds2, CRGB::White);
-    FastLED.show();
-    break;
-
-  case 17:
-    circle(strip2, num_leds2);
-    break;
-
-  default:
-    break;
+    case 5:
+      circle(strip1, num_leds1);
+      break;
+    }
   }
+ 
+
+  // strip 2: 13-24 
+  else if (note > 12 && note < 25)
+  {
+    switch (note)
+    {
+      case 13:
+        fill_solid(strip2, num_leds2, CRGB::Blue);
+        FastLED.show();
+        break;
+
+      case 14:
+        fill_solid(strip2, num_leds2, CRGB::Red);
+        FastLED.show();
+        break;
+
+      case 15:
+        fill_solid(strip2, num_leds2, CRGB::Green);
+        FastLED.show();
+        break;
+
+      case 16:
+        fill_solid(strip2, num_leds2, CRGB::White);
+        FastLED.show();
+        break;
+
+      case 17:
+        circle(strip2, num_leds2);
+        break;
+    }
+  } 
+
+   // strip 3: 25-36
+  else if (note > 24 && note < 37)
+  {
+    switch (note)
+    {
+      case 25:
+        fill_solid(strip3, num_leds3, CRGB::Blue);
+        FastLED.show();
+        break;
+
+      case 26:
+        fill_solid(strip3, num_leds3, CRGB::Red);
+        FastLED.show();
+        break;
+
+      case 27:
+        fill_solid(strip3, num_leds3, CRGB::Green);
+        FastLED.show();
+        break;
+
+      case 28:
+        fill_solid(strip3, num_leds3, CRGB::White);
+        FastLED.show();
+        break;
+
+      case 29:
+        circle(strip3, num_leds3);
+        break;
+    }
+  } 
+
 }
 
 void clearStrip(int note)
 {
       if (note > -1 && note < 13) { fill_solid(strip1, num_leds1, CRGB::Black); }//1-12 *strip 1
  else if (note > 12 && note < 25) { fill_solid(strip2, num_leds2, CRGB::Black); }//13-24 *strip 2
-//    else if (note > 24 && note < 37) { fill_solid(strip2, num_leds2, CRGB::Black); }//25-36 *strip 3
+ else if (note > 24 && note < 37) { fill_solid(strip3, num_leds3, CRGB::Black); }//25-36 *strip 3
 //    else if (note > 36 && note < 49) { fill_solid(strip2, num_leds2, CRGB::Black); }//37-48 *strip 4
 //    else if (note > 48 && note < 61) { fill_solid(strip2, num_leds2, CRGB::Black); }//49-60 *strip 5
 //    else if (note > 60 && note < 73) { fill_solid(strip2, num_leds2, CRGB::Black); }//61-72 *strip 6
