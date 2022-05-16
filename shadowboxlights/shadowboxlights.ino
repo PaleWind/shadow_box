@@ -8,15 +8,14 @@
 #define LED_PIN2 22
 #define LED_PIN3 21
 #define LED_PIN4 19
-#define num_leds1 165
-#define num_leds2 19
+#define num_leds 165
 
 std::vector<uint8_t> heldNotes; 
 
-CRGB strip1[num_leds1];
-CRGB strip2[num_leds2];
-CRGB strip3[num_leds2];
-CRGB strip4[num_leds2];
+CRGB strip1[num_leds];
+CRGB strip2[num_leds];
+CRGB strip3[num_leds];
+CRGB strip4[num_leds];
 
 void setup()
 {
@@ -25,10 +24,10 @@ void setup()
   Serial.begin(115200);
   Serial2.begin(115200, SERIAL_8N1, MIDI_PIN, tx2);
   
-  FastLED.addLeds<WS2812B, LED_PIN1, GRB>(strip1, num_leds1);
-  FastLED.addLeds<WS2812B, LED_PIN2, GRB>(strip2, num_leds2);
-  FastLED.addLeds<WS2812B, LED_PIN3, GRB>(strip3, num_leds2);
-  FastLED.addLeds<WS2812B, LED_PIN4, GRB>(strip4, num_leds2);
+  FastLED.addLeds<WS2812B, LED_PIN1, GRB>(strip1, num_leds);
+  FastLED.addLeds<WS2812B, LED_PIN2, GRB>(strip2, num_leds);
+  FastLED.addLeds<WS2812B, LED_PIN3, GRB>(strip3, num_leds);
+  FastLED.addLeds<WS2812B, LED_PIN4, GRB>(strip4, num_leds);
   FastLED.setBrightness(40);
 }
 
@@ -72,27 +71,27 @@ void routeMIDI(int note, int velocity)
     switch (note)
     {
     case 1:
-      fill_solid(strip1, num_leds1, CRGB::Blue);
+      fill_solid(strip1, num_leds, CRGB::Blue);
       FastLED.show();
       break;
     
     case 2:
-      fill_solid(strip1, num_leds1, CRGB::Red);
+      fill_solid(strip1, num_leds, CRGB::Red);
       FastLED.show();
       break;
 
     case 3:
-      fill_solid(strip1, num_leds1, CRGB::Green);
+      fill_solid(strip1, num_leds, CRGB::Green);
       FastLED.show();
       break;
 
     case 4:
-      fill_solid(strip1, num_leds1, CRGB::White);
+      fill_solid(strip1, num_leds, CRGB::White);
       FastLED.show();
       break;
 
     case 5:
-      circle(strip1, num_leds1);
+      circle(strip1, num_leds);
       break;
     }
   }
@@ -104,27 +103,27 @@ void routeMIDI(int note, int velocity)
     switch (note)
     {
       case 13:
-        fill_solid(strip2, num_leds2, CRGB::Blue);
+        fill_solid(strip2, num_leds, CRGB::Blue);
         FastLED.show();
         break;
 
       case 14:
-        fill_solid(strip2, num_leds2, CRGB::Red);
+        fill_solid(strip2, num_leds, CRGB::Red);
         FastLED.show();
         break;
 
       case 15:
-        fill_solid(strip2, num_leds2, CRGB::Green);
+        fill_solid(strip2, num_leds, CRGB::Green);
         FastLED.show();
         break;
 
       case 16:
-        fill_solid(strip2, num_leds2, CRGB::White);
+        fill_solid(strip2, num_leds, CRGB::White);
         FastLED.show();
         break;
 
       case 17:
-        circle(strip2, num_leds2);
+        circle(strip2, num_leds);
         break;
     }
   } 
@@ -135,27 +134,27 @@ void routeMIDI(int note, int velocity)
     switch (note)
     {
       case 25:
-        fill_solid(strip3, num_leds2, CRGB::Blue);
+        fill_solid(strip3, num_leds, CRGB::Blue);
         FastLED.show();
         break;
 
       case 26:
-        fill_solid(strip3, num_leds2, CRGB::Red);
+        fill_solid(strip3, num_leds, CRGB::Red);
         FastLED.show();
         break;
 
       case 27:
-        fill_solid(strip3, num_leds2, CRGB::Green);
+        fill_solid(strip3, num_leds, CRGB::Green);
         FastLED.show();
         break;
 
       case 28:
-        fill_solid(strip3, num_leds2, CRGB::White);
+        fill_solid(strip3, num_leds, CRGB::White);
         FastLED.show();
         break;
 
       case 29:
-        circle(strip3, num_leds2);
+        circle(strip3, num_leds);
         break;
     }
   } 
@@ -165,27 +164,27 @@ void routeMIDI(int note, int velocity)
     switch (note)
     {
       case 37:
-        fill_solid(strip4, num_leds2, CRGB::Blue);
+        fill_solid(strip4, num_leds, CRGB::Blue);
         FastLED.show();
         break;
 
       case 38:
-        fill_solid(strip4, num_leds2, CRGB::Red);
+        fill_solid(strip4, num_leds, CRGB::Red);
         FastLED.show();
         break;
 
       case 39:
-        fill_solid(strip4, num_leds2, CRGB::Green);
+        fill_solid(strip4, num_leds, CRGB::Green);
         FastLED.show();
         break;
 
       case 40:
-        fill_solid(strip4, num_leds2, CRGB::White);
+        fill_solid(strip4, num_leds, CRGB::White);
         FastLED.show();
         break;
 
       case 41:
-        circle(strip4, num_leds2);
+        circle(strip4, num_leds);
         break;
     }
   } 
@@ -194,14 +193,14 @@ void routeMIDI(int note, int velocity)
 
 void clearStrip(int note)
 {
-      if (note > -1 && note < 13) { fill_solid(strip1, num_leds1, CRGB::Black); }//1-12 *strip 1
- else if (note > 12 && note < 25) { fill_solid(strip2, num_leds2, CRGB::Black); }//13-24 *strip 2
- else if (note > 24 && note < 37) { fill_solid(strip3, num_leds2, CRGB::Black); }//25-36 *strip 3
- else if (note > 36 && note < 49) { fill_solid(strip4, num_leds2, CRGB::Black); }//37-48 *strip 4
-//    else if (note > 48 && note < 61) { fill_solid(strip2, num_leds2, CRGB::Black); }//49-60 *strip 5
-//    else if (note > 60 && note < 73) { fill_solid(strip2, num_leds2, CRGB::Black); }//61-72 *strip 6
-//    else if (note > 72 && note < 85) { fill_solid(strip2, num_leds2, CRGB::Black); }//73-84 *strip 7
-//    else if (note > 84 && note < 96) { fill_solid(strip2, num_leds2, CRGB::Black); }//85-96 *strip 8    
+      if (note > -1 && note < 13) { fill_solid(strip1, num_leds, CRGB::Black); }//1-12 *strip 1
+ else if (note > 12 && note < 25) { fill_solid(strip2, num_leds, CRGB::Black); }//13-24 *strip 2
+ else if (note > 24 && note < 37) { fill_solid(strip3, num_leds, CRGB::Black); }//25-36 *strip 3
+ else if (note > 36 && note < 49) { fill_solid(strip4, num_leds, CRGB::Black); }//37-48 *strip 4
+//    else if (note > 48 && note < 61) { fill_solid(strip2, num_leds, CRGB::Black); }//49-60 *strip 5
+//    else if (note > 60 && note < 73) { fill_solid(strip2, num_leds, CRGB::Black); }//61-72 *strip 6
+//    else if (note > 72 && note < 85) { fill_solid(strip2, num_leds, CRGB::Black); }//73-84 *strip 7
+//    else if (note > 84 && note < 96) { fill_solid(strip2, num_leds, CRGB::Black); }//85-96 *strip 8    
     
     FastLED.show();
 }

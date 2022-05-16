@@ -1,4 +1,4 @@
-#include <FastLED.h>
+//#include <FastLED.h>
 #include <MIDI.h>
 #include <string>
 #include <math.h>
@@ -16,14 +16,14 @@
 uint8_t hue = 0;
 static uint8_t  ticks = 0;
 
-CRGB strip1 [num_leds1];
-CRGB strip2 [num_leds2];
+//CRGB strip1 [num_leds1];
+//CRGB strip2 [num_leds2];
 HardwareSerial Pzemserial(2);
 MIDI_CREATE_INSTANCE(HardwareSerial, Pzemserial,  MIDI);
 
 //MIDI_CREATE_INSTANCE(HardwareSerial, Serial2,  MIDI);
 
-int bpm;
+int bpm = 140;
 #define MINIMUM_BPM 400 // Used for debouncing
 #define MAXIMUM_BPM 3000 // Used for debouncing
 long minimumTapInterval = 60L * 1000 * 1000 * 10 / MAXIMUM_BPM;
@@ -41,14 +41,9 @@ void setup()
 //Pins  
   pinMode(LED_BUILTIN, OUTPUT);
   Serial.begin(9600);
-  //Serial2.begin(31250, SERIAL_8N1, rx2, tx2);
+  Serial2.begin(31250, SERIAL_8N1, rx2, tx2);
   
-  Pzemserial.begin(31250, SERIAL_8N1, MIDI_PIN, tx2);
-  
-//FastLED
-  FastLED.addLeds<WS2812B, pin1, GRB>(strip1, num_leds1);
-  FastLED.addLeds<WS2812B, pin2, GRB>(strip2, num_leds2);
-  FastLED.setBrightness(40);
+  //Pzemserial.begin(31250, SERIAL_8N1, rx2, tx2);
 
 //MIDI
   MIDI.begin(MIDI_CHANNEL_OMNI);
@@ -80,13 +75,9 @@ void loop()
     bpm = std::round(temp);
     timesTapped = 0;
   }
-  uint8_t sinBeat = beatsin8(bpm/2, 0, num_leds1 - 1, 0, 0);
-  strip1[sinBeat] = sinBeat;
-  fadeToBlackBy(strip1, num_leds1, 1);
-  //    uint8_t sinBeat2 = beatsin8(30, 0, num_leds2 - 1, 0, 0);
-  //    strip2[sinBeat] = sinBeat2;
-  //    fadeToBlackBy(strip2, num_leds2, 1);
-  //
+  uint8_t sinBeat = beatsin8(140, 0, 140 , 0, 0);
+
+  
   EVERY_N_MILLISECONDS(10)
   {
       digitalWrite(LED_BUILTIN, 1);
@@ -123,40 +114,14 @@ void tapInput() {
 void handleNoteOn(byte channel, byte note, byte velocity)
 {
   digitalWrite(LED_BUILTIN, 1);
-    Serial.write("ON: ");
-  //    Serial.write("channel: "); Serial.write(channel);
-  //    Serial.write(" note: "); Serial.write(note);
-  //    Serial.write(" velocity: "); Serial.write(velocity);
-
-  if (note == 'C')
-  {
-    fill_solid(strip1, num_leds1, CRGB::Green);
-    fill_solid(strip2, num_leds2, CRGB::Green);
-  }
-  else if (velocity > 70)
-  {
-    fill_solid(strip1, num_leds1, CRGB::Blue);
-  }
-  else if (velocity < 71)
-  {
-    fill_solid(strip2, num_leds2, CRGB::Blue);
-  }
-  else
-  {
-    fill_solid(strip1, num_leds1, CRGB::Red);
-    fill_solid(strip2, num_leds2, CRGB::Red);
-  }
-  FastLED.show();
+  Serial.write(1);
+  Serial.write(note);
+  Serial.write(velocity);
 }
 void handleNoteOff(byte channel, byte note, byte velocity)
 {
   digitalWrite(LED_BUILTIN, 0);
-    Serial.write("Off: ");
-  //    Serial.write("channel: "); Serial.write(channel);
-  //    Serial.write(" note: "); Serial.write(note);
-  //    Serial.write(" velocity: "); Serial.write(velocity);
-
-  fill_solid(strip1, num_leds1, CRGB::Black);
-  fill_solid(strip2, num_leds2, CRGB::Black);
-  FastLED.show();
+  Serial.write(0);
+  Serial.write(note);
+  Serial.write(velocity);
 }

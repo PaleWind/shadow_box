@@ -30,7 +30,7 @@ void setup()
 void loop()
 {
   MIDI.read();
-  sb.setBPM();    
+  //sb.setBPM();    
 }
 
 void handleNoteOn(byte channel, byte note, byte velocity)
