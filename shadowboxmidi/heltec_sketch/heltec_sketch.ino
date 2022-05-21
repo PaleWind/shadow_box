@@ -41,15 +41,15 @@ void setup()
 //Pins  
   pinMode(LED_BUILTIN, OUTPUT);
   Serial.begin(9600);
-  Serial2.begin(31250, SERIAL_8N1, rx2, tx2);
+//  Serial2.begin(31250, SERIAL_8N1, rx2, tx2);
   
   //Pzemserial.begin(31250, SERIAL_8N1, rx2, tx2);
 
 //MIDI
-  MIDI.begin(MIDI_CHANNEL_OMNI);
-  MIDI.setHandleNoteOn(handleNoteOn);
-  MIDI.setHandleNoteOff(handleNoteOff);
-  MIDI.setHandleClock(handleClock);
+//  MIDI.begin(MIDI_CHANNEL_OMNI);
+//  MIDI.setHandleNoteOn(handleNoteOn);
+//  MIDI.setHandleNoteOff(handleNoteOff);
+//  MIDI.setHandleClock(handleClock);
 
 //OLED
   Heltec.begin(true /*DisplayEnable Enable*/, false /*LoRa Disable*/, true /*Serial Enable*/);
@@ -59,23 +59,23 @@ void setup()
 
 void loop()
 {
-  MIDI.read();
-
-  long now = micros();
-  if (timesTapped > 0 && timesTapped < 3 && (now - lastTapTime) > maximumTapInterval)
-  {
-    // Single taps, not enough to calculate a BPM -> ignore!
-    //    Serial.println("Ignoring lone taps!");
-    timesTapped = 0;
-  }
-  else if (timesTapped >= 3)
-  {
-    long avgTapInterval = (lastTapTime - firstTapTime) / (timesTapped - 1);
-    long temp = (60L * 1000 * 1000 * 10 / avgTapInterval) * 0.1f;
-    bpm = std::round(temp);
-    timesTapped = 0;
-  }
-  uint8_t sinBeat = beatsin8(140, 0, 140 , 0, 0);
+  //MIDI.read();
+//
+//  long now = micros();
+//  if (timesTapped > 0 && timesTapped < 3 && (now - lastTapTime) > maximumTapInterval)
+//  {
+//    // Single taps, not enough to calculate a BPM -> ignore!
+//    //    Serial.println("Ignoring lone taps!");
+//    timesTapped = 0;
+//  }
+//  else if (timesTapped >= 3)
+//  {
+//    long avgTapInterval = (lastTapTime - firstTapTime) / (timesTapped - 1);
+//    long temp = (60L * 1000 * 1000 * 10 / avgTapInterval) * 0.1f;
+//    bpm = std::round(temp);
+//    timesTapped = 0;
+//  }
+//  uint8_t sinBeat = beatsin8(140, 0, 140 , 0, 0);
 
   
   EVERY_N_MILLISECONDS(10)

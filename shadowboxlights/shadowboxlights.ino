@@ -11,6 +11,7 @@
 #define num_leds 165
 
 std::vector<uint8_t> heldNotes; 
+int bpm = 0;
 
 CRGB strip1[num_leds];
 CRGB strip2[num_leds];
@@ -33,6 +34,11 @@ void setup()
 
 void loop()
 {
+//  fill_solid(strip1, num_leds, CRGB::White);
+//          fill_solid(strip2, num_leds, CRGB::White);
+//          fill_solid(strip3, num_leds, CRGB::White);
+//          fill_solid(strip4, num_leds, CRGB::White);
+//                  FastLED.show();
   readNotes();
   for (auto note : heldNotes)
   {
@@ -43,20 +49,23 @@ void loop()
 
 void readNotes()
 {
-  if (Serial2.available() > 2)
+  if (Serial2.available() > 3)
   {
     int noteOn = Serial2.read();
     int note =   Serial2.read();
     int velocity = Serial2.read();
-    // Serial.println(noteOn); 
-    // Serial.write(note); 
-    // Serial.write(velocity); 
+    bpm = Serial2.read();
+    //  Serial.println(noteOn); 
+    //  Serial.write(note); 
+    //  Serial.write(velocity); 
     if (noteOn == 1) 
     {
+        digitalWrite(LED_BUILTIN, 1);
       heldNotes.push_back(note);
     }
     else if (noteOn == 0)
     {
+        digitalWrite(LED_BUILTIN, 0);
       heldNotes.erase(std::remove(heldNotes.begin(), heldNotes.end(), note), heldNotes.end());
       clearStrip(note);
     }
@@ -202,19 +211,24 @@ void clearStrip(int note)
 //    else if (note > 72 && note < 85) { fill_solid(strip2, num_leds, CRGB::Black); }//73-84 *strip 7
 //    else if (note > 84 && note < 96) { fill_solid(strip2, num_leds, CRGB::Black); }//85-96 *strip 8    
     
-    FastLED.show();
+  FastLED.show();
 }
 
 
 void circle(struct CRGB *strip, int numLeds)
 {
-    //int bpm = BPM > 0 ? BPM / 2 : 30;
-    uint8_t sawBeat = beat8(30);
-    //map sinBeat to # of leds
-    int wave = map(sawBeat, 0, 255, 0, numLeds - 1);
-    //Serial.println(wave);
-    strip[wave] = CRGB::White;
-    //pauls a genius
-    FastLED.show();
-    fadeToBlackBy(strip, numLeds, 20);
+  //int bpm = BPM > 0 ? BPM / 2 : 30;
+  uint8_t sawBeat = beat8(bpm);
+  //map sinBeat to # of leds
+  int wave = map(sawBeat, 0, 255, 0, numLeds - 1);
+  //Serial.println(wave);
+  strip[wave] = CRGB::White;
+  //pauls a genius
+  FastLED.show();
+  fadeToBlackBy(strip, numLeds, 20);
+}
+
+void breathe(struct CRGB *strip)
+{
+  
 }

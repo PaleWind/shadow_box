@@ -8,9 +8,10 @@
 #define LED_PIN6 22
 #define LED_PIN7 21
 #define LED_PIN8 19
-#define num_leds 165
+#define num_leds 170
 
 std::vector<uint8_t> heldNotes; 
+int bpm = 0; 
 
 CRGB strip5[num_leds];
 CRGB strip6[num_leds];
@@ -33,6 +34,11 @@ void setup()
 
 void loop()
 {
+        //   fill_solid(strip5, num_leds, CRGB::White);
+        //   fill_solid(strip6, num_leds, CRGB::White);
+        //   fill_solid(strip7, num_leds, CRGB::White);
+        //   fill_solid(strip8, num_leds, CRGB::White);
+        // FastLED.show();
   readNotes();
   for (auto note : heldNotes)
   {
@@ -43,20 +49,23 @@ void loop()
 
 void readNotes()
 {
-  if (Serial2.available() > 2)
+  if (Serial2.available() > 3)
   {
     int noteOn = Serial2.read();
     int note =   Serial2.read();
     int velocity = Serial2.read();
-    Serial.write(noteOn); 
-    Serial.write(note); 
-    Serial.write(velocity); 
+    bpm = Serial2.read();
+    //  Serial.println(noteOn); 
+    //  Serial.write(note); 
+    //  Serial.write(velocity); 
     if (noteOn == 1) 
     {
+        digitalWrite(LED_BUILTIN, 1);
       heldNotes.push_back(note);
     }
     else if (noteOn == 0)
     {
+        digitalWrite(LED_BUILTIN, 0);
       heldNotes.erase(std::remove(heldNotes.begin(), heldNotes.end(), note), heldNotes.end());
       clearStrip(note);
     }
@@ -204,7 +213,7 @@ void clearStrip(int note)
 void circle(struct CRGB *strip, int numLeds)
 {
     //int bpm = BPM > 0 ? BPM / 2 : 30;
-    uint8_t sawBeat = beat8(30);
+    uint8_t sawBeat = beat8(bpm);
     //map sinBeat to # of leds
     int wave = map(sawBeat, 0, 255, 0, numLeds - 1);
     //Serial.println(wave);
