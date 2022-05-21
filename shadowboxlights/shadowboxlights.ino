@@ -8,7 +8,7 @@
 #define LED_PIN2 22
 #define LED_PIN3 21
 #define LED_PIN4 19
-#define num_leds 165
+#define num_leds 170
 
 std::vector<uint8_t> heldNotes; 
 int bpm = 0;
@@ -38,7 +38,13 @@ void loop()
 //          fill_solid(strip2, num_leds, CRGB::White);
 //          fill_solid(strip3, num_leds, CRGB::White);
 //          fill_solid(strip4, num_leds, CRGB::White);
-//                  FastLED.show();
+  //FastLED.show();
+
+  breathe(strip1);
+  breathe(strip2);
+  breathe(strip3);
+  breathe(strip4);
+
   readNotes();
   for (auto note : heldNotes)
   {
@@ -102,6 +108,10 @@ void routeMIDI(int note, int velocity)
     case 5:
       circle(strip1, num_leds);
       break;
+
+    case 6:
+      breathe(strip1);
+      break;
     }
   }
  
@@ -134,6 +144,10 @@ void routeMIDI(int note, int velocity)
       case 17:
         circle(strip2, num_leds);
         break;
+
+      case 18:
+        breathe(strip2);
+        break;
     }
   } 
 
@@ -165,6 +179,10 @@ void routeMIDI(int note, int velocity)
       case 29:
         circle(strip3, num_leds);
         break;
+
+      case 30:
+        breathe(strip3);
+        break;
     }
   } 
   //strip4: 37-48 
@@ -195,6 +213,10 @@ void routeMIDI(int note, int velocity)
       case 41:
         circle(strip4, num_leds);
         break;
+      
+      case 42:
+        breathe(strip4);
+        break;
     }
   } 
 
@@ -217,18 +239,19 @@ void clearStrip(int note)
 
 void circle(struct CRGB *strip, int numLeds)
 {
-  //int bpm = BPM > 0 ? BPM / 2 : 30;
   uint8_t sawBeat = beat8(bpm);
   //map sinBeat to # of leds
   int wave = map(sawBeat, 0, 255, 0, numLeds - 1);
-  //Serial.println(wave);
   strip[wave] = CRGB::White;
-  //pauls a genius
   FastLED.show();
-  fadeToBlackBy(strip, numLeds, 20);
+  fadeToBlackBy(strip, numLeds, 30);
 }
 
 void breathe(struct CRGB *strip)
 {
-  
+  uint8_t sawBeat = beatsin8(bpm / 4);
+  int wave = map(sawBeat, 0, 255, 0, 230);
+  FastLED.setBrightness(wave);
+  fill_solid(strip, num_leds, CRGB::White);
+  FastLED.show();
 }
