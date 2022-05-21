@@ -40,11 +40,6 @@ void loop()
 //          fill_solid(strip4, num_leds, CRGB::White);
   //FastLED.show();
 
-  breathe(strip1);
-  breathe(strip2);
-  breathe(strip3);
-  breathe(strip4);
-
   readNotes();
   for (auto note : heldNotes)
   {
@@ -249,7 +244,7 @@ void circle(struct CRGB *strip, int numLeds)
 
 void breathe(struct CRGB *strip)
 {
-  uint8_t sawBeat = beatsin8(bpm / 4);
+  uint8_t sawBeat = beatsin8(bpm / 2);
   int wave = map(sawBeat, 0, 255, 0, 230);
   FastLED.setBrightness(wave);
   fill_solid(strip, num_leds, CRGB::White);

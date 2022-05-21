@@ -60,12 +60,12 @@ void readNotes()
     //  Serial.write(velocity); 
     if (noteOn == 1) 
     {
-        digitalWrite(LED_BUILTIN, 1);
+      // digitalWrite(LED_BUILTIN, 1);
       heldNotes.push_back(note);
     }
     else if (noteOn == 0)
     {
-        digitalWrite(LED_BUILTIN, 0);
+      // digitalWrite(LED_BUILTIN, 0);
       heldNotes.erase(std::remove(heldNotes.begin(), heldNotes.end(), note), heldNotes.end());
       clearStrip(note);
     }
@@ -102,6 +102,10 @@ void routeMIDI(int note, int velocity)
     case 53:
       circle(strip5, num_leds);
       break;
+
+    case 54:
+      breathe(strip5);
+      break;
     }
   }
  
@@ -134,6 +138,10 @@ void routeMIDI(int note, int velocity)
       case 65:
         circle(strip6, num_leds);
         break;
+
+      case 66:
+        breathe(strip6);
+        break;
     }
   } 
 
@@ -165,6 +173,10 @@ void routeMIDI(int note, int velocity)
       case 77:
         circle(strip7, num_leds);
         break;
+
+      case 78:
+        breathe(strip7);
+        break;
     }
   } 
   //strip8: 85-96 
@@ -195,6 +207,10 @@ void routeMIDI(int note, int velocity)
       case 89:
         circle(strip8, num_leds);
         break;
+
+      case 90:
+        breathe(strip8);
+        break;
     }
   } 
 
@@ -212,13 +228,19 @@ void clearStrip(int note)
 
 void circle(struct CRGB *strip, int numLeds)
 {
-    //int bpm = BPM > 0 ? BPM / 2 : 30;
-    uint8_t sawBeat = beat8(bpm);
-    //map sinBeat to # of leds
-    int wave = map(sawBeat, 0, 255, 0, numLeds - 1);
-    //Serial.println(wave);
-    strip[wave] = CRGB::White;
-    //pauls a genius
-    FastLED.show();
-    fadeToBlackBy(strip, numLeds, 20);
+  uint8_t sawBeat = beat8(bpm);
+  //map sinBeat to # of leds
+  int wave = map(sawBeat, 0, 255, 0, numLeds - 1);
+  strip[wave] = CRGB::White;
+  FastLED.show();
+  fadeToBlackBy(strip, numLeds, 30);
+}
+
+void breathe(struct CRGB *strip)
+{
+  uint8_t sawBeat = beatsin8(bpm / 4);
+  int wave = map(sawBeat, 0, 255, 0, 230);
+  FastLED.setBrightness(wave);
+  fill_solid(strip, num_leds, CRGB::White);
+  FastLED.show();
 }
