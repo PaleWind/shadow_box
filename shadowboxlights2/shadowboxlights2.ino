@@ -1,5 +1,6 @@
 #include <FastLED.h>
 #include <vector>
+#include <map>
 
 #define MIDI_PIN 16 //rx2, receive midi
 #define tx2 17 // future midi out/thru
@@ -10,8 +11,8 @@
 #define LED_PIN8 19
 #define num_leds 170
 
-std::vector<uint8_t> heldNotes; 
-int bpm = 0; 
+std::map<int, int> heldNotes;
+int bpm = 70; 
 
 CRGB strip5[num_leds];
 CRGB strip6[num_leds];
@@ -29,21 +30,15 @@ void setup()
   FastLED.addLeds<WS2812B, LED_PIN6, GRB>(strip6, num_leds);
   FastLED.addLeds<WS2812B, LED_PIN7, GRB>(strip7, num_leds);
   FastLED.addLeds<WS2812B, LED_PIN8, GRB>(strip8, num_leds);
-  FastLED.setBrightness(40);
+  FastLED.setBrightness(100);
 }
 
 void loop()
 {
-        //   fill_solid(strip5, num_leds, CRGB::White);
-        //   fill_solid(strip6, num_leds, CRGB::White);
-        //   fill_solid(strip7, num_leds, CRGB::White);
-        //   fill_solid(strip8, num_leds, CRGB::White);
-        // FastLED.show();
   readNotes();
   for (auto note : heldNotes)
   {
-    //  
-    routeMIDI(note, 0);
+    routeMIDI(note.first, note.second);
   }
 }
 
@@ -58,16 +53,19 @@ void readNotes()
     //  Serial.println(noteOn); 
     //  Serial.write(note); 
     //  Serial.write(velocity); 
-    if (noteOn == 1) 
+    if (note < 48)
     {
-      // digitalWrite(LED_BUILTIN, 1);
-      heldNotes.push_back(note);
-    }
-    else if (noteOn == 0)
-    {
-      // digitalWrite(LED_BUILTIN, 0);
-      heldNotes.erase(std::remove(heldNotes.begin(), heldNotes.end(), note), heldNotes.end());
-      clearStrip(note);
+      if (noteOn == 1) 
+      {
+        digitalWrite(LED_BUILTIN, 1);
+        heldNotes.insert(std::make_pair(note, velocity));
+      }
+      else if (noteOn == 0)
+      {
+        digitalWrite(LED_BUILTIN, 0);
+        heldNotes.erase(note);
+        clearStrip(note);
+      }
     }
   }
 }
@@ -79,36 +77,39 @@ void routeMIDI(int note, int velocity)
   {
     switch (note)
     {
-    case 49:
-      fill_solid(strip5, num_leds, CRGB::Blue);
-      FastLED.show();
-      break;
-    
-    case 50:
-      fill_solid(strip5, num_leds, CRGB::Red);
-      FastLED.show();
-      break;
+      case 49:
+        fill_solid(strip5, num_leds, CRGB::Blue);
+        FastLED.show();
+        break;
+      
+      case 50:
+        fill_solid(strip5, num_leds, CRGB::Red);
+        FastLED.show();
+        break;
 
-    case 51:
-      fill_solid(strip5, num_leds, CRGB::Green);
-      FastLED.show();
-      break;
+      case 51:
+        fill_solid(strip5, num_leds, CRGB::Green);
+        FastLED.show();
+        break;
 
-    case 52:
-      fill_solid(strip5, num_leds, CRGB::White);
-      FastLED.show();
-      break;
+      case 52:
+        fill_solid(strip5, num_leds, CRGB::White);
+        FastLED.show();
+        break;
 
-    case 53:
-      circle(strip5, num_leds);
-      break;
+      case 53:
+        circle(strip5, velocity);
+        break;
 
-    case 54:
-      breathe(strip5);
-      break;
+      case 54:
+        breathe(strip5, velocity);
+        break;
+      
+      case 55:
+        bounce(strip5, velocity);
+        break;
     }
   }
- 
 
   // strip 2: 61-72 
   else if (note > 60 && note < 73)
@@ -136,11 +137,15 @@ void routeMIDI(int note, int velocity)
         break;
 
       case 65:
-        circle(strip6, num_leds);
+        circle(strip6, velocity);
         break;
 
       case 66:
-        breathe(strip6);
+        breathe(strip6, velocity);
+        break;
+
+      case 67:
+        bounce(strip6, velocity);
         break;
     }
   } 
@@ -171,14 +176,19 @@ void routeMIDI(int note, int velocity)
         break;
 
       case 77:
-        circle(strip7, num_leds);
+        circle(strip7, velocity);
         break;
 
       case 78:
-        breathe(strip7);
+        breathe(strip7, velocity);
+        break;
+
+      case 79:
+        bounce(strip7, velocity);
         break;
     }
   } 
+
   //strip8: 85-96 
   else if (note > 84 && note < 97)
   {
@@ -205,15 +215,18 @@ void routeMIDI(int note, int velocity)
         break;
 
       case 89:
-        circle(strip8, num_leds);
+        circle(strip8, velocity);
         break;
 
       case 90:
-        breathe(strip8);
+        breathe(strip8, velocity);
+        break;
+
+      case 91:
+        bounce(strip8, velocity);
         break;
     }
   } 
-
 }
 
 void clearStrip(int note)
@@ -223,24 +236,37 @@ void clearStrip(int note)
  else if (note > 72 && note < 85) { fill_solid(strip7, num_leds, CRGB::Black); }//73-84 *strip 7
  else if (note > 84 && note < 96) { fill_solid(strip8, num_leds, CRGB::Black); }//85-96 *strip 8    
     
-    FastLED.show();
+  FastLED.show();
 }
 
-void circle(struct CRGB *strip, int numLeds)
+void circle(struct CRGB *strip, int color)
 {
   uint8_t sawBeat = beat8(bpm);
   //map sinBeat to # of leds
-  int wave = map(sawBeat, 0, 255, 0, numLeds - 1);
-  strip[wave] = CRGB::White;
+  int wave = map(sawBeat, 0, 255, 0, num_leds - 1);
+  int hue = map(color, 0, 127, 0, 255);
+  strip[wave] = CHSV(hue, 255, 100);
   FastLED.show();
-  fadeToBlackBy(strip, numLeds, 30);
+  fadeToBlackBy(strip, num_leds, 40);
 }
 
-void breathe(struct CRGB *strip)
+void breathe(struct CRGB *strip, int color)
 {
-  uint8_t sawBeat = beatsin8(bpm / 4);
-  int wave = map(sawBeat, 0, 255, 0, 230);
-  FastLED.setBrightness(wave);
-  fill_solid(strip, num_leds, CRGB::White);
+  uint8_t beat = beatsin8(bpm / 2);
+  float wave = map(beat, 0, 255, 0, 10000);
+  float hue = map(color, 0, 127, 0, 255);
+  fill_solid(strip, num_leds, CHSV(hue, 255, wave * .01));
   FastLED.show();
+}
+
+void bounce(struct CRGB *strip, int color)
+{
+  int hue = map(color, 0, 127, 0, 255);
+  uint8_t sawBeat = beatsin8(70);
+  int left = map(sawBeat, 0, 255, 19, 85);
+  int right = map(sawBeat, 0, 255, 169, 103);
+  strip[left] = CHSV(hue, 255, 100);
+  strip[right] = CHSV(hue, 255, 100);
+  FastLED.show();
+  fadeToBlackBy(strip, num_leds, 50);
 }
