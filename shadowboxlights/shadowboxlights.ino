@@ -1,5 +1,4 @@
 #include <FastLED.h>
-#include <vector>
 #include <iostream>
 #include <map>
 
@@ -11,6 +10,21 @@
 #define LED_PIN3 21
 #define LED_PIN4 19
 #define num_leds 170
+
+// Gradient palette "bhw2_xc_gp", originally from
+// http://soliton.vm.bytemark.co.uk/pub/cpt-city/bhw/bhw2/tn/bhw2_xc.png.index.html
+// converted for FastLED with gammas (2.6, 2.2, 2.5)
+// Size: 28 bytes of program space.
+
+DEFINE_GRADIENT_PALETTE( Plasma ) {
+    0,   4,  2,  9,
+   58,  16,  0, 47,
+  122,  24,  0, 16,
+  158, 144,  9,  1,
+  183, 179, 45,  1,
+  219, 220,114,  2,
+  255, 234,137,  1};
+CRGBPalette16 PlasmaPalette = Plasma;
 
 DEFINE_GRADIENT_PALETTE( rainbow_gp ) {
     0, 126,  1,142,
@@ -28,18 +42,47 @@ DEFINE_GRADIENT_PALETTE( rainbow_gp ) {
   255, 255, 255, 255};
 CRGBPalette16 rainbowPalette = rainbow_gp;
 
-DEFINE_GRADIENT_PALETTE( fire_gp ) {
-    0,   0,  0,  0,
-   99, 227,  1,  1,
-  130, 249,199, 95,
-  155, 227,  1,  1,
-  255,   0,  0,  0};
-CRGBPalette16 firePalette = fire_gp;
+DEFINE_GRADIENT_PALETTE( Sunset_Real_gp ) {
+    0, 120,  0,  0,
+   22, 179, 22,  0,
+   51, 255,104,  0,
+   85, 167, 22, 18,
+  135, 100,  0,103,
+  198,  16,  0,130,
+  255,   0,  0,160};
+CRGBPalette16 sunsetPalette = Sunset_Real_gp;
+
+DEFINE_GRADIENT_PALETTE( rasta_gp ) {
+    0, 0, 255, 0,
+   40, 255, 255, 0,
+   80, 255,0, 0,
+   120,0, 255, 0,
+   160,255, 255, 0,
+   200,255,0, 0,
+   255,255, 100, 0,};
+CRGBPalette16 rastaPalette = rasta_gp;
+
+const CRGBPalette16 palettes[] = {
+    rainbowPalette,
+    PlasmaPalette,
+    sunsetPalette,
+    rastaPalette
+  };
+//const TProgmemRGBPalette16* palettes[] = {
+//  &OceanColors_p,
+//  &RainbowColors_p,
+//  &ForestColors_p,
+//  &PartyColors_p,
+//  &LavaColors_p,
+//  &CloudColors_p
+//  };
+int paletteSize = sizeof(palettes)/sizeof(palettes[0]);
+CRGBPalette16 currentPalette = LavaColors_p;
 
 std::map<int, int> heldNotes;
-int bpm = 70;
-
 CRGB strips[4][num_leds];
+int bpm = 70;
+uint8_t gHue = 0; // rotating "base color" used by many of the patterns
 
 void setup()
 {
@@ -47,15 +90,11 @@ void setup()
   pinMode(LED_BUILTIN, OUTPUT);
   Serial.begin(115200);
   Serial2.begin(115200, SERIAL_8N1, MIDI_PIN, tx2);
+  
   FastLED.addLeds<WS2812B, LED_PIN1, GRB>(strips[0], num_leds);
   FastLED.addLeds<WS2812B, LED_PIN2, GRB>(strips[1], num_leds);
   FastLED.addLeds<WS2812B, LED_PIN3, GRB>(strips[2], num_leds);
   FastLED.addLeds<WS2812B, LED_PIN4, GRB>(strips[3], num_leds);
-
-  // FastLED.addLeds<WS2812B, LED_PIN1, GRB>(strip1, num_leds);
-  // FastLED.addLeds<WS2812B, LED_PIN2, GRB>(strip2, num_leds);
-  // FastLED.addLeds<WS2812B, LED_PIN3, GRB>(strip3, num_leds);
-  // FastLED.addLeds<WS2812B, LED_PIN4, GRB>(strip4, num_leds);
   FastLED.setBrightness(200);
 }
 
@@ -130,11 +169,15 @@ void routeMIDI(int note, int velocity)
         break;
         
       case 7:
-
+        makeNoise(0, velocity);
         break;
       
       case 8:
+        stripes(0, velocity);
+        break;
 
+      case 9:
+        juggle(0, velocity);
         break;
     }
   }
@@ -171,8 +214,7 @@ void routeMIDI(int note, int velocity)
         break;
       
       case 19:
-        fill_noise16(strips[1], num_leds, 1, 0, 100, 1, 1, velocity, millis() / bpm, 5);
-        FastLED.show(); 
+        makeNoise(1, velocity);
         break;
     }
   } 
@@ -289,12 +331,11 @@ void routeMIDI(int note, int velocity)
 
 void clearStrip(int note)
 {
-      if (note > -1 && note < 13) { fill_solid(strips[0], num_leds, CRGB::Black); }//1-12 *strip 1
- else if (note > 12 && note < 25) { fill_solid(strips[1], num_leds, CRGB::Black); }//13-24 *strip 2
- else if (note > 24 && note < 37) { fill_solid(strips[2], num_leds, CRGB::Black); }//25-36 *strip 3
- else if (note > 36 && note < 49) { fill_solid(strips[3], num_leds, CRGB::Black); }//37-48 *strip 4
- else if (note > 48 && note < 61) { clearStrips(); }//49-60 *strip 5
-
+      if (note >  0 && note < 13) { fill_solid(strips[0], num_leds, CRGB::Black); }// 1-12 strip 1
+ else if (note > 12 && note < 25) { fill_solid(strips[1], num_leds, CRGB::Black); }//13-24 strip 2
+ else if (note > 24 && note < 37) { fill_solid(strips[2], num_leds, CRGB::Black); }//25-36 strip 3
+ else if (note > 36 && note < 49) { fill_solid(strips[3], num_leds, CRGB::Black); }//37-48 strip 4
+ else if (note > 48 && note < 61) { clearStrips(); }//49-60 all strips
   FastLED.show();
 }
 
@@ -351,13 +392,38 @@ void cross(int strip, int velocity)
 
 void makeNoise(int strip, int velocity)
 {
-  int wave = beatsin8(bpm / 4, velocity/2, velocity);
-  for (int led=0; led<num_leds; led++)
-  {
-    uint8_t noise = inoise8(led * wave, 0, millis() / bpm);
-    strips[strip][led] = ColorFromPalette(rainbowPalette, noise, 250, NOBLEND);
+  int palette = map(velocity, 1, 127, 0, paletteSize);
+  currentPalette = palettes[palette];
+  #define scale 20                                                          // Don't change this programmatically or everything shakes.
+  for(int i = 0; i < num_leds; i++) {                                       // Just ONE loop to fill up the LED array as all of the pixels change.
+    uint8_t index = inoise8(i*scale, millis()/5+i*scale);                   // Get a value from the noise function. I'm using both x and y axis.
+    strips[strip][i] = ColorFromPalette(currentPalette, index, 255, LINEARBLEND);    // With that value, look up the 8 bit colour palette value and assign it to the current LED.
   }
+  FastLED.show();
 }
+
+void stripes(int strip, int velocity)
+{
+  // colored stripes pulsing at a defined Beats-Per-Minute (BPM)
+  uint8_t beat = beatsin8( bpm, 64, 255);
+  for( int i = 0; i < num_leds; i++) { //9948
+    strips[strip][i] = ColorFromPalette(rainbowPalette, beat+gHue+(i*2), beat-gHue+(i*10));
+  }
+  FastLED.show();
+}
+
+ void juggle(int strip, int velocity) 
+ {
+  // eight colored dots, weaving in and out of sync with each other
+  fadeToBlackBy( strips[strip], num_leds, 20);
+  uint8_t dothue = 0;
+  for( int i = 0; i < 8; i++)
+  {
+    strips[strip][beatsin16( i+7, 0, num_leds-1 )] |= CHSV(dothue, 200, 250);
+    dothue += 26;
+  }  
+  FastLED.show();
+ }
 
 //*********globals*******
 void fillGlobal(int velocity)
