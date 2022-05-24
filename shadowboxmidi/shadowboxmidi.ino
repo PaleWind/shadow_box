@@ -11,6 +11,8 @@
 #define MIDI_PIN 16 //rx2, receive midi
 #define tx2 17 // future midi out/thru 
 #define OUT_PIN 21
+#define BTN_PIN 18
+
 static uint8_t  ticks = 0; //midi ticks per quarter note
 int bpm = 0;
 int analogValue = 0;
@@ -39,6 +41,7 @@ void setup()
   display.setCursor(0, 0);
   
   //Pins
+  pinMode(BTN_PIN, INPUT_PULLUP);
   pinMode(LED_BUILTIN, OUTPUT);
   Serial.begin(115200);
   Serial2.begin(31250, SERIAL_8N1, MIDI_PIN, tx2);
@@ -52,6 +55,8 @@ void setup()
 
 void loop()
 {
+//  Serial.println(digitalRead(BTN_PIN));
+//  digitalWrite(LED_BUILTIN, digitalRead(BTN_PIN));
   unsigned long currentMillis = millis();
   MIDI.read();
   //setBPM();  

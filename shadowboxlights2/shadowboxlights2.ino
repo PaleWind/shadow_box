@@ -119,7 +119,7 @@ void readNotes()
     //  Serial.println(noteOn); 
     //  Serial.write(note); 
     //  Serial.write(velocity); 
-    if (note > 60)
+    if (note > 60 && note < 121)
     {
       if (noteOn == 1) 
       {
@@ -490,10 +490,14 @@ void routeMIDI(int note, int velocity)
         break;
       
       case 91:
+        makeNoise(2, velocity);
+        break;
+        
+      case 92:
         stripes(2, velocity);
         break;
 
-      case 92:
+      case 93:
         juggle(2, velocity);
         break;
     }
@@ -541,7 +545,7 @@ void routeMIDI(int note, int velocity)
   } 
 
   // Global: 109-120
-  if (note > 108 && note < 61)
+  if (note > 108 && note < 121)
   {
     switch (note)
     {
@@ -549,31 +553,31 @@ void routeMIDI(int note, int velocity)
         fillGlobal(velocity);
         break;
       
-      case 100:
+      case 110:
         circleGlobal(velocity);
         break;
 
-      case 101:
+      case 111:
         breatheGlobal(velocity);
         break;
 
-      case 102:
+      case 112:
         bounceGlobal(velocity);
         break;
 
-      case 103:
+      case 113:
         crossGlobal(velocity);
         break;
 
-      case 104:
+      case 114:
         makeNoiseGlobal(velocity);
         break;
       
-      case 105:
+      case 115:
         stripesGlobal(velocity);
         break;
 
-      case 106:
+      case 116:
         juggleGlobal(velocity);
         break;
     }

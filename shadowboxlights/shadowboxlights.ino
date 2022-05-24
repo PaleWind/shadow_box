@@ -119,7 +119,7 @@ void readNotes()
     //  Serial.println(noteOn); 
     //  Serial.write(note); 
     //  Serial.write(velocity); 
-    if (note < 61)
+    if (note > 0 && note < 61)
     {
       if (noteOn == 1) 
       {
