@@ -43,7 +43,7 @@ void setup()
   //Pins
   pinMode(BTN_PIN, INPUT_PULLUP);
   pinMode(LED_BUILTIN, OUTPUT);
-  Serial.begin(115200);
+  Serial.begin(230400);
   Serial2.begin(31250, SERIAL_8N1, MIDI_PIN, tx2);
 
   //MIDI
