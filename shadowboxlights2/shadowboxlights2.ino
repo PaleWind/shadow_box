@@ -119,7 +119,7 @@ DEFINE_GRADIENT_PALETTE( rainbow_gp ) {
   209,  12,  1,151,
   232,  12,  1,151,
   254, 171,  1,190,
-  255, 255, 255, 230};
+  255, 255, 255, 255};
 CRGBPalette16 rainbowPalette = rainbow_gp;
 DEFINE_GRADIENT_PALETTE( Sunset_Real_gp ) {
     0, 120,  0,  0,
@@ -614,6 +614,7 @@ void routeMIDI(int note, int velocity)
       
       case 103:
         makeNoise(3, velocity);
+        break;
 
       case 104:
         stripes(3, velocity);

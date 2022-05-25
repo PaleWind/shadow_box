@@ -151,7 +151,8 @@ const CRGBPalette16 palettes[] = {
     RainbowStripeColors_p,
     CloudColors_p,
     PartyColors_p,
-    RgiPalette
+    RgiPalette,
+    WhiteoutPalette
   };
 int paletteSize = sizeof(palettes)/sizeof(palettes[0]);
 CRGBPalette16 currentPalette = LavaColors_p;
@@ -615,10 +616,14 @@ void routeMIDI(int note, int velocity)
         break;
       
       case 43:
-        stripes(3, velocity);
+        makeNoise(3, velocity);
         break;
 
       case 44:
+        stripes(3, velocity);
+        break;
+
+      case 45:
         juggle(3, velocity);
         break;
     }
