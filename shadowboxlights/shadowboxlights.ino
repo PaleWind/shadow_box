@@ -489,7 +489,7 @@ void circleGlobal(int velocity)
   strips[2][wave] = color;
   strips[3][wave] = color;
   FastLED.show();
-  clearStrips();
+  fadeStrips();
 }
 
 void breatheGlobal(int velocity)
@@ -516,7 +516,7 @@ void bounceGlobal(int velocity)
     strip[right] = color;
   }
   FastLED.show();
-  clearStrips();
+  fadeStrips();
 }
 
 void crossGlobal(int velocity)
@@ -530,7 +530,7 @@ void crossGlobal(int velocity)
     strip[wave2] = c;
   }
   FastLED.show();
-  clearStrips();
+  fadeStrips();
 }
 
 void makeNoiseGlobal(int velocity)
@@ -571,15 +571,17 @@ void juggleGlobal(int velocity)
   clearStrips();
   int palette = map(velocity, 1, 127, 0, paletteSize);
   uint8_t dothue = 0;
-  for (auto strip : strips)
+
+  for( int i = 0; i < 8; i++)
   {
-    for( int i = 0; i < 8; i++)
-    {
-      strip[beatsin16( i+7, 0, num_leds-1 )] |= ColorFromPalette(palettes[palette], dothue, 250);
-      dothue += 26;
-    }
+    uint8_t beat = beatsin16( i+7, 0, num_leds-1 );
+    strips[0][beat] |= ColorFromPalette(palettes[palette], dothue, 250);
+    strips[1][beat] |= ColorFromPalette(palettes[palette], dothue, 250);
+    strips[2][beat] |= ColorFromPalette(palettes[palette], dothue, 250);
+    strips[3][beat] |= ColorFromPalette(palettes[palette], dothue, 250);
+    dothue += 26;
   }
-    
+  
   FastLED.show();
  }
 
@@ -673,6 +675,15 @@ void clearStrips()
   fill_solid(strips[1], num_leds, CRGB::Black); 
   fill_solid(strips[2], num_leds, CRGB::Black); 
   fill_solid(strips[3], num_leds, CRGB::Black); 
+  FastLED.show();
+}
+
+void fadeStrips()
+{
+  fadeToBlackBy(strips[0], num_leds, 10);
+  fadeToBlackBy(strips[1], num_leds, 10);
+  fadeToBlackBy(strips[2], num_leds, 10);
+  fadeToBlackBy(strips[3], num_leds, 10);
   FastLED.show();
 }
 
