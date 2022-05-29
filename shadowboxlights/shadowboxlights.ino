@@ -349,6 +349,8 @@ void scrollPaletteUp(int strip, int velocity)
         uint8_t brightness = 255;
 
         for(int i = 19; i < 96; i++) 
+//        for(int i = 8; i < 96; i++) 
+
         {
             strips[strip][i] = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
             colorIndex += 3;
@@ -373,89 +375,57 @@ void scrollPaletteUp(int strip, int velocity)
     }
     FastLED.show();
 }
-//
-//void scrollPaletteY(int strip, int velocity) 
-//{
-//  byte y = 0;
-//  if (velocity < 64)
-//  {
-//    int palette = map(velocity, 1, 63, 0, paletteSize);
-//    currentPalette = palettes[palette];
-//    //scrollPaletteDown(strip);
-//  } 
-//  else 
-//  {
-//    int palette = map(velocity, 64, 127, 0, paletteSize);
-//    currentPalette = palettes[palette];
-//    y = 1;
-//    //scrollPaletteDown(strip);
-//  }
-//
-//    EVERY_N_MILLISECONDS(10)
-//    {
-//        static float startIndex = 0;
-//        startIndex = startIndex + 1; /* motion speed */
-//        float colorIndex = startIndex;
-//        uint8_t brightness = 255;
-//
-//        for( int i = 19; i < 86; i++) 
-//        {
-//            strips[strip][i] =  ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
-//            colorIndex = y > 0 ? colorIndex - 3 : colorIndex + 3;
-//        }
-//        for( int i = 169; i > 102; i--) 
-//        {
-//            strips[strip][i] =  ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
-//            colorIndex = y > 0 ? colorIndex - 3 : colorIndex - 3;
-//        }
-//
-//    }      
-//    FastLED.show();
-//}
-//
-//void trippyPalette(int strip, int velocity)
-//{
-//  for (int i = 
-//}
-//
-//void lavaLamp(int strip, int velocity) 
-//{
-//  byte y = 0;
-//  if (velocity < 64)
-//  {
-//    int palette = map(velocity, 1, 63, 0, paletteSize);
-//    currentPalette = palettes[palette];
-//    //scrollPaletteDown(strip);
-//  } 
-//  else 
-//  {
-//    int palette = map(velocity, 64, 127, 0, paletteSize);
-//    currentPalette = palettes[palette];
-//    y = 1;
-//    //scrollPaletteDown(strip);
-//  }
-//
-//    EVERY_N_MILLISECONDS(10)
-//    {
-//        static float startIndex = 0;
-//        startIndex = startIndex + 1; /* motion speed */
-//        float colorIndex = startIndex;
-//        uint8_t brightness = 255;
-//
-//        for( int i = 19; i < 86; i++) 
-//        {
-//            strips[strip][i] =  ColorFromPalette( currentPalette, inoise8(colorIndex, colorIndex / i), brightness, LINEARBLEND);
-//            colorIndex = y > 0 ? colorIndex - 3 : colorIndex + 3;
-//        }
-//        for( int i = 169; i > 102; i--) 
-//        {
-//            strips[strip][i] =  ColorFromPalette( currentPalette, inoise8(colorIndex, colorIndex / i), brightness, LINEARBLEND);
-//            colorIndex = y > 0 ? colorIndex - 3 : colorIndex + 3;
-//        }
-//
-//    }      
-//    FastLED.show();
-//}
+
+void openyourmind(int strip, int velocity)
+{
+  int palette = map(velocity, 1, 127, 0, paletteSize);
+  currentPalette = palettes[palette];
+  EVERY_N_MILLISECONDS(10)
+  {
+    static float startIndex = 0;
+    startIndex = startIndex + 1; /* motion speed */
+    uint8_t colorIndex = startIndex;
+    uint8_t colorIndex2 = startIndex;
+    uint8_t brightness = 255;
+   //left
+    for(int i = 8; i > -1; i--)
+    {
+        strips[strip][i] = ColorFromPalette( currentPalette, colorIndex2, brightness, LINEARBLEND);
+        colorIndex2 += 3;
+    }
+    for(int i = 169; i > 135; i--) 
+    {
+        strips[strip][i] = ColorFromPalette( currentPalette, colorIndex2, brightness, LINEARBLEND);
+        colorIndex2 += 3;
+    }
+    for(int i = 94; i < 136; i++) 
+    {
+        strips[strip][i] = ColorFromPalette( currentPalette, colorIndex2, brightness, LINEARBLEND);
+        colorIndex2 += 3;
+    }
+       
+    //right
+    for(int i = 9; i <18; i++)
+    {
+        strips[strip][i] = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
+        colorIndex += 3;
+    }
+    for(int i = 18; i < 51; i++) 
+    {
+        strips[strip][i] = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
+        colorIndex += 3;
+    }
+    for(int i = 93; i > 51; i--) 
+    {
+        strips[strip][i] = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
+        colorIndex += 3;
+    }
+
+  }
+  FastLED.show();
+}
+
+
 //*********globals*******
 void fillGlobal(int velocity)
 {
@@ -658,6 +628,74 @@ void scrollPaletteUpGlobal(int velocity)
     FastLED.show();
 }
 
+void openyourmindGlobal(int velocity)
+{
+  int palette = map(velocity, 1, 127, 0, paletteSize);
+  currentPalette = palettes[palette];
+  EVERY_N_MILLISECONDS(10)
+  {
+    static float startIndex = 0;
+    startIndex = startIndex + 1; /* motion speed */
+    uint8_t colorIndex = startIndex;
+    uint8_t colorIndex2 = startIndex;
+    uint8_t brightness = 100;
+   //left
+    for(int i = 8; i > -1; i--)
+    {
+        strips[0][i] = ColorFromPalette( currentPalette, colorIndex2, brightness, LINEARBLEND);
+        strips[1][i] = ColorFromPalette( currentPalette, colorIndex2, brightness, LINEARBLEND);
+        strips[2][i] = ColorFromPalette( currentPalette, colorIndex2, brightness, LINEARBLEND);
+        strips[3][i] = ColorFromPalette( currentPalette, colorIndex2, brightness, LINEARBLEND);
+        colorIndex2 += 3;
+    }
+    for(int i = 169; i > 135; i--) 
+    {
+        strips[0][i] = ColorFromPalette( currentPalette, colorIndex2, brightness, LINEARBLEND);
+        strips[1][i] = ColorFromPalette( currentPalette, colorIndex2, brightness, LINEARBLEND);
+        strips[2][i] = ColorFromPalette( currentPalette, colorIndex2, brightness, LINEARBLEND);
+        strips[3][i] = ColorFromPalette( currentPalette, colorIndex2, brightness, LINEARBLEND);
+        colorIndex2 += 3;
+    }
+    for(int i = 94; i < 136; i++) 
+    {
+        strips[0][i] = ColorFromPalette( currentPalette, colorIndex2, brightness, LINEARBLEND);
+        strips[1][i] = ColorFromPalette( currentPalette, colorIndex2, brightness, LINEARBLEND);
+        strips[2][i] = ColorFromPalette( currentPalette, colorIndex2, brightness, LINEARBLEND);
+        strips[3][i] = ColorFromPalette( currentPalette, colorIndex2, brightness, LINEARBLEND);
+        colorIndex2 += 3;
+    }
+       
+    //right
+    for(int i = 9; i <18; i++)
+    {
+        strips[0][i] = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
+        strips[1][i] = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
+        strips[2][i] = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
+        strips[3][i] = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
+        colorIndex += 3;
+    }
+    for(int i = 18; i < 51; i++) 
+    {
+        strips[0][i] = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
+        strips[1][i] = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
+        strips[2][i] = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
+        strips[3][i] = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
+        colorIndex += 3;
+    }
+    for(int i = 93; i > 51; i--) 
+    {
+        strips[0][i] = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
+        strips[1][i] = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
+        strips[2][i] = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
+        strips[3][i] = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
+        colorIndex += 3;
+    }
+
+  }
+  FastLED.show();
+}
+
+
 //******beware******
 void clearStrip(int note)
 {
@@ -741,6 +779,10 @@ void routeMIDI(int note, int velocity)
       case 11:
         scrollPaletteUp(0, velocity);
         break;
+                
+      case 12:
+        openyourmind(0, velocity);
+        break;
     }
   }
  
@@ -793,6 +835,10 @@ void routeMIDI(int note, int velocity)
 
       case 23:
         scrollPaletteUp(1, velocity);
+        break;
+        
+      case 24:
+        openyourmind(1, velocity);
         break;
     }
   } 
@@ -847,6 +893,10 @@ void routeMIDI(int note, int velocity)
       case 35:
         scrollPaletteUp(2, velocity);
         break;
+        
+      case 36:
+        openyourmind(2, velocity);
+        break;
     }
   } 
 
@@ -900,6 +950,10 @@ void routeMIDI(int note, int velocity)
       case 47:
         scrollPaletteUp(3, velocity);
         break;
+                
+      case 48:
+        openyourmind(3, velocity);
+        break;
     }
   } 
 
@@ -950,6 +1004,10 @@ void routeMIDI(int note, int velocity)
 
       case 59:
         scrollPaletteUpGlobal(velocity);
+        break;
+        
+      case 60:
+        openyourmindGlobal(velocity);
         break;
     }
   }
