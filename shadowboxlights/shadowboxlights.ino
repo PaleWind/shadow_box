@@ -175,7 +175,7 @@ const CRGBPalette16 palettes[] = {
     PartyColors_p,
     RgiPalette,
     spacePalette,
-    
+    beachPalette,
     WhiteoutPalette
   };
 int paletteSize = sizeof(palettes)/sizeof(palettes[0]);
