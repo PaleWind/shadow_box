@@ -357,9 +357,9 @@ void juggle(int strip, int velocity)
   FastLED.show();
  }
 
-void scrollPalette(int strip, int velocity)
+void scrollPaletteLeft(int strip, int velocity)
 {
-    int palette = map(velocity, 1, 127, 0, paletteSize);
+    uint8_t palette = map(velocity, 1, 127, 0, paletteSize);
     currentPalette = palettes[palette];
     EVERY_N_MILLISECONDS(10)
     {
@@ -369,6 +369,26 @@ void scrollPalette(int strip, int velocity)
         uint8_t brightness = 255;
 
         for( int i = 0; i < num_leds; i++) 
+        {
+            strips[strip][i] = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
+            colorIndex += 3;
+        }
+    }
+    FastLED.show();
+}
+
+void scrollPaletteRight(int strip, int velocity)
+{
+    uint8_t palette = map(velocity, 1, 127, 0, paletteSize);
+    currentPalette = palettes[palette];
+    EVERY_N_MILLISECONDS(10)
+    {
+        static float startIndex = 0;
+        startIndex = startIndex + 1; /* motion speed */
+        float colorIndex = startIndex;
+        uint8_t brightness = 255;
+
+        for( int i = num_leds; i > 0; i--) 
         {
             strips[strip][i] = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
             colorIndex += 3;
@@ -594,7 +614,7 @@ void juggleGlobal(int velocity)
   FastLED.show();
  }
 
-void scrollPaletteGlobal(int velocity)
+void scrollPaletteLeftGlobal(int velocity)
 {
     int palette = map(velocity, 1, 127, 0, paletteSize);
     currentPalette = palettes[palette];
@@ -617,6 +637,28 @@ void scrollPaletteGlobal(int velocity)
     FastLED.show();
 }
 
+void scrollPaletteRightGlobal(int velocity)
+{
+    uint8_t palette = map(velocity, 1, 127, 0, paletteSize);
+    currentPalette = palettes[palette];
+    EVERY_N_MILLISECONDS(10)
+    {
+        static float startIndex = 0;
+        startIndex = startIndex + 1; /* motion speed */
+        float colorIndex = startIndex;
+        uint8_t brightness = 255;
+
+        for( int i = num_leds; i > 0; i--) 
+        {
+            strips[0][i] = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
+            strips[1][i] = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
+            strips[2][i] = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
+            strips[3][i] = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
+            colorIndex += 3;
+        }
+    }
+    FastLED.show();
+}
 void scrollPaletteUpGlobal(int velocity) 
 {
     int palette = map(velocity, 1, 127, 0, paletteSize);
@@ -779,8 +821,7 @@ void routeMIDI(int note, int velocity)
         break;
       
       case 2:
-        fill_solid(strips[0], num_leds, CRGB::White);
-        FastLED.show(); 
+        breathe(0, velocity);
         break;
 
       case 3:
@@ -788,15 +829,15 @@ void routeMIDI(int note, int velocity)
         break;
 
       case 4:
-        breathe(0, velocity);
-        break;
-
-      case 5:
         bounce(0, velocity);
         break;
 
-      case 6:
+      case 5:
         cross(0, velocity);
+        break;
+
+      case 6:
+        juggle(0, velocity);
         break;
         
       case 7:
@@ -808,17 +849,17 @@ void routeMIDI(int note, int velocity)
         break;
 
       case 9:
-        juggle(0, velocity);
+        scrollPaletteLeft(0, velocity);
         break;
 
       case 10:
-        scrollPalette(0, velocity);
+        scrollPaletteRight(0, velocity);
         break;
-        
+      
       case 11:
         scrollPaletteUp(0, velocity);
         break;
-                
+              
       case 12:
         openyourmind(0, velocity);
         break;
@@ -834,10 +875,9 @@ void routeMIDI(int note, int velocity)
         fill_palette(strips[1], num_leds, map(velocity, 0, 127, 0, 255), 0, rainbowPalette, 250, NOBLEND);
         FastLED.show();
         break;
-
+      
       case 14:
-        fill_solid(strips[1], num_leds, CRGB::White);
-        FastLED.show(); 
+        breathe(1, velocity);
         break;
 
       case 15:
@@ -845,37 +885,37 @@ void routeMIDI(int note, int velocity)
         break;
 
       case 16:
-        breathe(1, velocity);
-        break;
-
-      case 17:
         bounce(1, velocity);
         break;
 
-      case 18:
+      case 17:
         cross(1, velocity);
         break;
-      
+
+      case 18:
+        juggle(1, velocity);
+        break;
+        
       case 19:
         makeNoise(1, velocity);
         break;
-
+      
       case 20:
         stripes(1, velocity);
         break;
 
       case 21:
-        juggle(1, velocity);
+        scrollPaletteLeft(1, velocity);
         break;
 
       case 22:
-        scrollPalette(1, velocity);
+        scrollPaletteRight(1, velocity);
         break;
-
+      
       case 23:
         scrollPaletteUp(1, velocity);
         break;
-        
+              
       case 24:
         openyourmind(1, velocity);
         break;
@@ -887,14 +927,13 @@ void routeMIDI(int note, int velocity)
   {
     switch (note)
     {
-      case 25:
+     case 25:
         fill_palette(strips[2], num_leds, map(velocity, 0, 127, 0, 255), 0, rainbowPalette, 250, NOBLEND);
         FastLED.show();
         break;
-
+      
       case 26:
-        fill_solid(strips[2], num_leds, CRGB::White);
-        FastLED.show(); 
+        breathe(2, velocity);
         break;
 
       case 27:
@@ -902,37 +941,37 @@ void routeMIDI(int note, int velocity)
         break;
 
       case 28:
-        breathe(2, velocity);
-        break;
-
-      case 29:
         bounce(2, velocity);
         break;
 
-      case 30:
+      case 29:
         cross(2, velocity);
         break;
-      
+
+      case 30:
+        juggle(2, velocity);
+        break;
+        
       case 31:
         makeNoise(2, velocity);
         break;
-
+      
       case 32:
         stripes(2, velocity);
         break;
 
       case 33:
-        juggle(2, velocity);
+        scrollPaletteLeft(2, velocity);
         break;
 
       case 34:
-        scrollPalette(2, velocity);
+        scrollPaletteRight(2, velocity);
         break;
-
+      
       case 35:
         scrollPaletteUp(2, velocity);
         break;
-        
+              
       case 36:
         openyourmind(2, velocity);
         break;
@@ -948,10 +987,9 @@ void routeMIDI(int note, int velocity)
         fill_palette(strips[3], num_leds, map(velocity, 0, 127, 0, 255), 0, rainbowPalette, 250, NOBLEND);
         FastLED.show();
         break;
-
+      
       case 38:
-        fill_solid(strips[3], num_leds, CRGB::White);
-        FastLED.show();
+        breathe(3, velocity);
         break;
 
       case 39:
@@ -959,37 +997,37 @@ void routeMIDI(int note, int velocity)
         break;
 
       case 40:
-        breathe(3, velocity);
+        bounce(3, velocity);
         break;
 
       case 41:
-        bounce(3, velocity);
-        break;
-      
-      case 42:
         cross(3, velocity);
         break;
-      
+
+      case 42:
+        juggle(3, velocity);
+        break;
+        
       case 43:
         makeNoise(3, velocity);
         break;
-
+      
       case 44:
         stripes(3, velocity);
         break;
 
       case 45:
-        juggle(3, velocity);
+        scrollPaletteLeft(3, velocity);
         break;
-        
+
       case 46:
-        scrollPalette(3, velocity);
+        scrollPaletteRight(3, velocity);
         break;
-        
+      
       case 47:
         scrollPaletteUp(3, velocity);
         break;
-                
+              
       case 48:
         openyourmind(3, velocity);
         break;
@@ -1006,7 +1044,7 @@ void routeMIDI(int note, int velocity)
         break;
       
       case 50:
-        whiteOut(velocity);
+        breatheGlobal(velocity);
         break;
 
       case 51:
@@ -1014,15 +1052,15 @@ void routeMIDI(int note, int velocity)
         break;
 
       case 52:
-        breatheGlobal(velocity);
-        break;
-
-      case 53:
         bounceGlobal(velocity);
         break;
 
+      case 53:
+        whiteOut(velocity);
+        break;
+
       case 54:
-        crossGlobal(velocity);
+        juggleGlobal(velocity);
         break;
 
       case 55:
@@ -1034,11 +1072,11 @@ void routeMIDI(int note, int velocity)
         break;
 
       case 57:
-        juggleGlobal(velocity);
+        scrollPaletteRightGlobal(velocity);
         break;
 
       case 58:
-        scrollPaletteGlobal(velocity);
+        scrollPaletteLeftGlobal(velocity);
         break;
 
       case 59:

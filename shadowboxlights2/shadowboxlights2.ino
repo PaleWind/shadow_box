@@ -118,7 +118,8 @@ DEFINE_GRADIENT_PALETTE( rainbow_gp ) {
   186,   1,  8,149,
   209,  12,  1,151,
   232,  12,  1,151,
-  254, 171,  1,190,
+  247, 171,  1,190,
+  248,255,255,255,
   255, 255, 255, 255};
 CRGBPalette16 rainbowPalette = rainbow_gp;
 DEFINE_GRADIENT_PALETTE( Sunset_Real_gp ) {
@@ -128,7 +129,7 @@ DEFINE_GRADIENT_PALETTE( Sunset_Real_gp ) {
    85, 167, 22, 18,
   135, 100,  0,103,
   198,  16,  0,130,
-  255,   0,  0,160};
+  250,   0,  0,160};
 CRGBPalette16 sunsetPalette = Sunset_Real_gp;
 DEFINE_GRADIENT_PALETTE( rasta_gp ) {
     0, 0, 255, 0,
@@ -252,10 +253,10 @@ void readNotes()
 {
   if (Serial2.available() > 3)
   {
-    int noteOn = Serial2.read();
-    int note =   Serial2.read();
-    int velocity = Serial2.read();
-    int bpmRead = Serial2.read();
+    uint8_t noteOn = Serial2.read();
+    uint8_t note =   Serial2.read();
+    uint8_t velocity = Serial2.read();
+    uint8_t bpmRead = Serial2.read();
     if (bpmRead != bpm){bpm = bpmRead;}
     //  Serial.println(noteOn); 
     //  Serial.write(note); 
@@ -281,7 +282,7 @@ void readNotes()
 void circle(int strip, int velocity)
 {
   uint8_t sawBeat = beat8(bpm);
-  int wave1 = map(sawBeat, 0, 255, 0, num_leds - 1);
+  uint8_t wave1 = map(sawBeat, 0, 255, 0, num_leds - 1);
   //int wave2 = map(sawBeat, 0, 255, num_leds - 1, 0);
   auto hue = ColorFromPalette(rainbowPalette, map(velocity, 0, 127, 0, 255), 250, NOBLEND);
   strips[strip][wave1] = hue;
@@ -293,39 +294,40 @@ void circle(int strip, int velocity)
 void breathe(int strip, int velocity)
 {
   uint8_t beat = beatsin8(bpm);
-  float wave = map(beat, 0, 255, 0, 200);
+  uint8_t wave = map(beat, 0, 255, 0, 200);
   fill_palette(strips[strip], num_leds, map(velocity, 0, 127, 0, 255), 0, rainbowPalette, wave, NOBLEND);
   FastLED.show();
 }
 
 void bounce(int strip, int velocity)
 {
-  uint8_t sawBeat = beatsin8(bpm);
+  uint8_t left = beatsin8(bpm, 19, 84, 0, 0);
   CRGB c = ColorFromPalette(rainbowPalette, map(velocity, 0, 127, 0, 255), 250, NOBLEND);
-  int left = map(sawBeat, 0, 255, 19, 85);
-  int right = map(sawBeat, 0, 255, 169, 103);
+  //int left = map(sawBeat, 0, 67, 19, 84);
+  uint8_t right = map(left, 19, 84, 169, 103);
   strips[strip][left] = c;
   strips[strip][right] = c;
   FastLED.show();
-  fadeToBlackBy(strips[strip], num_leds, 30);
+  fadeToBlackBy(strips[strip], num_leds, 20);
 }
 
 void cross(int strip, int velocity)
 {
-  uint8_t wave1 = beatsin8(bpm / 2, 0, 169, 0, 0);
-  uint8_t wave2 = beatsin8(bpm / 2, 0, 169, 0, 85);
+  uint8_t beats = bpm / 2;
+  uint8_t wave1 = beatsin8(beats, 0, 169, 0, 0);
+  uint8_t wave2 = beatsin8(beats, 0, 169, 0, 85);
   CRGB c = ColorFromPalette(rainbowPalette, map(velocity, 0, 127, 0, 255), 250, NOBLEND);
   strips[strip][wave1] = c;
   strips[strip][wave2] = c;
   FastLED.show();
-  fadeToBlackBy(strips[strip], num_leds, 30);
+  fadeToBlackBy(strips[strip], num_leds, 20);
 }
 
 void makeNoise(int strip, int velocity)
 {
-  int palette = map(velocity, 1, 127, 0, paletteSize);
+  uint8_t palette = map(velocity, 1, 127, 0, paletteSize);
   currentPalette = palettes[palette];
-  for(int i = 0; i < num_leds; i++) {                                       // Just ONE loop to fill up the LED array as all of the pixels change.
+  for(uint8_t i = 0; i < num_leds; i++) {                                       // Just ONE loop to fill up the LED array as all of the pixels change.
       uint8_t index = inoise8(i*scale, millis()/5+i*scale);                   // Get a value from the noise function. I'm using both x and y axis.
       strips[strip][i] = ColorFromPalette(currentPalette, index, 255, LINEARBLEND);    // With that value, look up the 8 bit colour palette value and assign it to the current LED.
   }
@@ -335,8 +337,8 @@ void makeNoise(int strip, int velocity)
 void stripes(int strip, int velocity)
 {
   uint8_t beat = beatsin8( bpm, 0, 255);
-  int palette = map(velocity, 1, 127, 0, paletteSize);
-  for( int i = 0; i < num_leds; i++) {
+  uint8_t palette = map(velocity, 1, 127, 0, paletteSize);
+  for( uint8_t i = 0; i < num_leds; i++) {
     strips[strip][i] = ColorFromPalette(palettes[palette], i*2, beat+(i*10));
   }
   FastLED.show();
@@ -346,9 +348,9 @@ void juggle(int strip, int velocity)
  {
   // eight colored dots, weaving in and out of sync with each other
   fadeToBlackBy( strips[strip], num_leds, 20);
-  int palette = map(velocity, 1, 127, 0, paletteSize);
+  uint8_t palette = map(velocity, 1, 127, 0, paletteSize);
   uint8_t dothue = 0;
-  for( int i = 0; i < 8; i++)
+  for( uint8_t i = 0; i < 8; i++)
   {
     strips[strip][beatsin16( i+7, 0, num_leds-1 )] |= ColorFromPalette(palettes[palette], dothue, 250);
     dothue += 26;
@@ -356,9 +358,9 @@ void juggle(int strip, int velocity)
   FastLED.show();
  }
 
-void scrollPalette(int strip, int velocity)
+void scrollPaletteLeft(int strip, int velocity)
 {
-    int palette = map(velocity, 1, 127, 0, paletteSize);
+    uint8_t palette = map(velocity, 1, 127, 0, paletteSize);
     currentPalette = palettes[palette];
     EVERY_N_MILLISECONDS(10)
     {
@@ -368,6 +370,26 @@ void scrollPalette(int strip, int velocity)
         uint8_t brightness = 255;
 
         for( int i = 0; i < num_leds; i++) 
+        {
+            strips[strip][i] = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
+            colorIndex += 3;
+        }
+    }
+    FastLED.show();
+}
+
+void scrollPaletteRight(int strip, int velocity)
+{
+    uint8_t palette = map(velocity, 1, 127, 0, paletteSize);
+    currentPalette = palettes[palette];
+    EVERY_N_MILLISECONDS(10)
+    {
+        static float startIndex = 0;
+        startIndex = startIndex + 1; /* motion speed */
+        float colorIndex = startIndex;
+        uint8_t brightness = 255;
+
+        for( int i = num_leds; i > 0; i--) 
         {
             strips[strip][i] = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
             colorIndex += 3;
@@ -481,10 +503,10 @@ void whiteOut(int velocity)
 {
   float wave = beatsin8(bpm / 16, 44, 200);
   float wave2 = beatsin8(bpm / 8, 44, 200);
-  fill_palette(strips[0], num_leds, wave2, 0, autumnPalette, wave, NOBLEND);
-  fill_palette(strips[1], num_leds, wave2, 0, autumnPalette, wave, NOBLEND);
-  fill_palette(strips[2], num_leds, wave2, 0, autumnPalette, wave, NOBLEND);
-  fill_palette(strips[3], num_leds, wave2, 0, autumnPalette, wave, NOBLEND);
+  fill_palette(strips[0], num_leds, wave2, 0, WhiteoutPalette, wave, NOBLEND);
+  fill_palette(strips[1], num_leds, wave2, 0, WhiteoutPalette, wave, NOBLEND);
+  fill_palette(strips[2], num_leds, wave2, 0, WhiteoutPalette, wave, NOBLEND);
+  fill_palette(strips[3], num_leds, wave2, 0, WhiteoutPalette, wave, NOBLEND);
   FastLED.show(); 
 }
 
@@ -515,10 +537,9 @@ void breatheGlobal(int velocity)
 
 void bounceGlobal(int velocity)
 {
-  uint8_t sawBeat = beatsin8(bpm);
+  uint8_t left = beatsin8(bpm, 19, 84, 0, 0);
+  uint8_t right = map(left, 19, 84, 169, 103);
   CRGB color = ColorFromPalette(rainbowPalette, map(velocity, 0, 127, 0, 255), 250, NOBLEND);
-  int left = map(sawBeat, 0, 255, 19, 85);
-  int right = map(sawBeat, 0, 255, 169, 103);
   for (auto strip : strips)
   {
     strip[left] = color;
@@ -594,7 +615,7 @@ void juggleGlobal(int velocity)
   FastLED.show();
  }
 
-void scrollPaletteGlobal(int velocity)
+void scrollPaletteLeftGlobal(int velocity)
 {
     int palette = map(velocity, 1, 127, 0, paletteSize);
     currentPalette = palettes[palette];
@@ -606,6 +627,29 @@ void scrollPaletteGlobal(int velocity)
         uint8_t brightness = 255;
 
         for( int i = 0; i < num_leds; i++) 
+        {
+            strips[0][i] = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
+            strips[1][i] = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
+            strips[2][i] = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
+            strips[3][i] = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
+            colorIndex += 3;
+        }
+    }
+    FastLED.show();
+}
+
+void scrollPaletteRightGlobal(int velocity)
+{
+    uint8_t palette = map(velocity, 1, 127, 0, paletteSize);
+    currentPalette = palettes[palette];
+    EVERY_N_MILLISECONDS(10)
+    {
+        static float startIndex = 0;
+        startIndex = startIndex + 1; /* motion speed */
+        float colorIndex = startIndex;
+        uint8_t brightness = 255;
+
+        for( int i = num_leds; i > 0; i--) 
         {
             strips[0][i] = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
             strips[1][i] = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
@@ -738,11 +782,11 @@ void openyourmindGlobal(int velocity)
 //******beware******
 void clearStrip(int note)
 {
-      if (note >  0 && note < 13) { fill_solid(strips[0], num_leds, CRGB::Black); }// 1-12 strip 1
- else if (note > 12 && note < 25) { fill_solid(strips[1], num_leds, CRGB::Black); }//13-24 strip 2
- else if (note > 24 && note < 37) { fill_solid(strips[2], num_leds, CRGB::Black); }//25-36 strip 3
- else if (note > 36 && note < 49) { fill_solid(strips[3], num_leds, CRGB::Black); }//37-48 strip 4
- else if (note > 48 && note < 61) { clearStrips(); }//49-60 all strips
+      if (note > 60 && note < 73) { fill_solid(strips[0], num_leds, CRGB::Black); }//73-84 strip 6
+ else if (note > 72 && note < 85) { fill_solid(strips[1], num_leds, CRGB::Black); }//73-84 strip 6
+ else if (note > 84 && note < 97) { fill_solid(strips[2], num_leds, CRGB::Black); }//85-96 strip 7
+ else if (note > 96 && note < 109){ fill_solid(strips[3], num_leds, CRGB::Black); }//96-108strip 8 
+ else if (note > 108 && note < 121) { clearStrips(); }//109-120 all strips      
   FastLED.show();
 }
 
@@ -778,8 +822,7 @@ void routeMIDI(int note, int velocity)
         break;
       
       case 62:
-        fill_solid(strips[0], num_leds, CRGB::White);
-        FastLED.show(); 
+        breathe(0, velocity);
         break;
 
       case 63:
@@ -787,15 +830,15 @@ void routeMIDI(int note, int velocity)
         break;
 
       case 64:
-        breathe(0, velocity);
-        break;
-
-      case 65:
         bounce(0, velocity);
         break;
 
-      case 66:
+      case 65:
         cross(0, velocity);
+        break;
+
+      case 66:
+        juggle(0, velocity);
         break;
         
       case 67:
@@ -807,11 +850,11 @@ void routeMIDI(int note, int velocity)
         break;
 
       case 69:
-        juggle(0, velocity);
+        scrollPaletteLeft(0, velocity);
         break;
 
       case 70:
-        scrollPalette(0, velocity);
+        scrollPaletteRight(0, velocity);
         break;
       
       case 71:
@@ -833,10 +876,9 @@ void routeMIDI(int note, int velocity)
         fill_palette(strips[1], num_leds, map(velocity, 0, 127, 0, 255), 0, rainbowPalette, 250, NOBLEND);
         FastLED.show();
         break;
-
+      
       case 74:
-        fill_solid(strips[1], num_leds, CRGB::White);
-        FastLED.show(); 
+        breathe(1, velocity);
         break;
 
       case 75:
@@ -844,37 +886,37 @@ void routeMIDI(int note, int velocity)
         break;
 
       case 76:
-        breathe(1, velocity);
-        break;
-
-      case 77:
         bounce(1, velocity);
         break;
 
-      case 78:
+      case 77:
         cross(1, velocity);
         break;
-      
+
+      case 78:
+        juggle(1, velocity);
+        break;
+        
       case 79:
         makeNoise(1, velocity);
         break;
-
+      
       case 80:
         stripes(1, velocity);
         break;
 
       case 81:
-        juggle(1, velocity);
+        scrollPaletteLeft(1, velocity);
         break;
 
       case 82:
-        scrollPalette(1, velocity);
+        scrollPaletteRight(1, velocity);
         break;
-        
+      
       case 83:
         scrollPaletteUp(1, velocity);
         break;
-                
+              
       case 84:
         openyourmind(1, velocity);
         break;
@@ -886,14 +928,13 @@ void routeMIDI(int note, int velocity)
   {
     switch (note)
     {
-      case 85:
+     case 85:
         fill_palette(strips[2], num_leds, map(velocity, 0, 127, 0, 255), 0, rainbowPalette, 250, NOBLEND);
         FastLED.show();
         break;
-
+      
       case 86:
-        fill_solid(strips[2], num_leds, CRGB::White);
-        FastLED.show(); 
+        breathe(2, velocity);
         break;
 
       case 87:
@@ -901,37 +942,37 @@ void routeMIDI(int note, int velocity)
         break;
 
       case 88:
-        breathe(2, velocity);
-        break;
-
-      case 89:
         bounce(2, velocity);
         break;
 
-      case 90:
+      case 89:
         cross(2, velocity);
         break;
-      
+
+      case 90:
+        juggle(2, velocity);
+        break;
+        
       case 91:
         makeNoise(2, velocity);
         break;
-        
+      
       case 92:
         stripes(2, velocity);
         break;
 
       case 93:
-        juggle(2, velocity);
+        scrollPaletteLeft(2, velocity);
         break;
 
       case 94:
-        scrollPalette(2, velocity);
+        scrollPaletteRight(2, velocity);
         break;
-        
+      
       case 95:
         scrollPaletteUp(2, velocity);
         break;
-                
+              
       case 96:
         openyourmind(2, velocity);
         break;
@@ -947,10 +988,9 @@ void routeMIDI(int note, int velocity)
         fill_palette(strips[3], num_leds, map(velocity, 0, 127, 0, 255), 0, rainbowPalette, 250, NOBLEND);
         FastLED.show();
         break;
-
+      
       case 98:
-        fill_solid(strips[3], num_leds, CRGB::White);
-        FastLED.show();
+        breathe(3, velocity);
         break;
 
       case 99:
@@ -958,37 +998,37 @@ void routeMIDI(int note, int velocity)
         break;
 
       case 100:
-        breathe(3, velocity);
+        bounce(3, velocity);
         break;
 
       case 101:
-        bounce(3, velocity);
-        break;
-      
-      case 102:
         cross(3, velocity);
         break;
-      
+
+      case 102:
+        juggle(3, velocity);
+        break;
+        
       case 103:
         makeNoise(3, velocity);
         break;
-
+      
       case 104:
         stripes(3, velocity);
         break;
 
       case 105:
-        juggle(3, velocity);
+        scrollPaletteLeft(3, velocity);
         break;
 
       case 106:
-        scrollPalette(3, velocity);
+        scrollPaletteRight(3, velocity);
         break;
-        
+      
       case 107:
         scrollPaletteUp(3, velocity);
         break;
-                
+              
       case 108:
         openyourmind(3, velocity);
         break;
@@ -1005,7 +1045,7 @@ void routeMIDI(int note, int velocity)
         break;
       
       case 110:
-        whiteOut(velocity);
+        breatheGlobal(velocity);
         break;
 
       case 111:
@@ -1013,15 +1053,15 @@ void routeMIDI(int note, int velocity)
         break;
 
       case 112:
-        breatheGlobal(velocity);
-        break;
-
-      case 113:
         bounceGlobal(velocity);
         break;
 
+      case 113:
+        whiteOut(velocity);
+        break;
+
       case 114:
-        crossGlobal(velocity);
+        juggleGlobal(velocity);
         break;
 
       case 115:
@@ -1033,11 +1073,11 @@ void routeMIDI(int note, int velocity)
         break;
 
       case 117:
-        juggleGlobal(velocity);
+        scrollPaletteRightGlobal(velocity);
         break;
 
       case 118:
-        scrollPaletteGlobal(velocity);
+        scrollPaletteLeftGlobal(velocity);
         break;
 
       case 119:
