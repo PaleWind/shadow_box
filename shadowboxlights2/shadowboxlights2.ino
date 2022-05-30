@@ -389,7 +389,7 @@ void scrollPaletteRight(int strip, int velocity)
         float colorIndex = startIndex;
         uint8_t brightness = 255;
 
-        for( int i = num_leds; i > 0; i--) 
+        for( int i = num_leds - 1; i > 0; i--) 
         {
             strips[strip][i] = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
             colorIndex += 3;

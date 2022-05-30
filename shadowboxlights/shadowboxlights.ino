@@ -388,7 +388,7 @@ void scrollPaletteRight(int strip, int velocity)
         float colorIndex = startIndex;
         uint8_t brightness = 255;
 
-        for( int i = num_leds; i > 0; i--) 
+        for( int i = num_leds-1; i > 0; i--) 
         {
             strips[strip][i] = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
             colorIndex += 3;
@@ -501,10 +501,10 @@ void whiteOut(int velocity)
 {
   float wave = beatsin8(bpm / 16, 44, 200);
   float wave2 = beatsin8(bpm / 8, 44, 200);
-  fill_palette(strips[0], num_leds, wave2, 0, autumnPalette, wave, NOBLEND);
-  fill_palette(strips[1], num_leds, wave2, 0, autumnPalette, wave, NOBLEND);
-  fill_palette(strips[2], num_leds, wave2, 0, autumnPalette, wave, NOBLEND);
-  fill_palette(strips[3], num_leds, wave2, 0, autumnPalette, wave, NOBLEND);
+  fill_palette(strips[0], num_leds, wave2, 0, WhiteoutPalette, wave, NOBLEND);
+  fill_palette(strips[1], num_leds, wave2, 0, WhiteoutPalette, wave, NOBLEND);
+  fill_palette(strips[2], num_leds, wave2, 0, WhiteoutPalette, wave, NOBLEND);
+  fill_palette(strips[3], num_leds, wave2, 0, WhiteoutPalette, wave, NOBLEND);
   FastLED.show(); 
 }
 
