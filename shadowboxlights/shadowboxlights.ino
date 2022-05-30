@@ -161,6 +161,42 @@ DEFINE_GRADIENT_PALETTE( beach_gp ) {
   255,  16,  1, 53};
 CRGBPalette16 beachPalette = beach_gp;
 
+DEFINE_GRADIENT_PALETTE( angelcompassion_gp ) {
+    0, 121,108, 63,
+   81,  48, 36, 42,
+  170,   1,  4, 17,
+  255,  19, 31, 50};
+CRGBPalette16 compassionPalette = angelcompassion_gp;
+
+DEFINE_GRADIENT_PALETTE( angelrepose_gp ) {
+    0, 167, 57, 53,
+  255,  12, 90, 99};
+CRGBPalette16 reposePalette = angelrepose_gp;
+
+DEFINE_GRADIENT_PALETTE( autumnasrai_gp ) {
+    0, 148,111,115,
+  127, 140,133,108,
+  255,  73, 73, 82};
+CRGBPalette16 autumnPalette = autumnasrai_gp;
+
+DEFINE_GRADIENT_PALETTE( beautifuldreams_gp ) {
+    0,  27, 27, 49,
+   51, 126,104,138,
+   76,  64, 85,133,
+  127,   4, 16, 78,
+  178,  64, 85,133,
+  204, 126,104,138,
+  255,  27, 27, 49};
+CRGBPalette16 beautifulDreamsPalette = beautifuldreams_gp;
+
+DEFINE_GRADIENT_PALETTE( catfairy_gp ) {
+    0,  74,124, 85,
+   76, 152,128, 44,
+  127, 144, 97, 96,
+  178, 100, 72,102,
+  232,  78, 90,122,
+  255,  78, 90,122};
+CRGBPalette16 catfairyPalette = catfairy_gp;
 
 const CRGBPalette16 palettes[] = {
     rainbowPalette,
@@ -176,6 +212,11 @@ const CRGBPalette16 palettes[] = {
     RgiPalette,
     spacePalette,
     beachPalette,
+    compassionPalette,
+    reposePalette,
+    autumnPalette,
+    beautifulDreamsPalette,
+    catfairyPalette,
     WhiteoutPalette
   };
 int paletteSize = sizeof(palettes)/sizeof(palettes[0]);
@@ -350,7 +391,6 @@ void scrollPaletteUp(int strip, int velocity)
 
         for(int i = 19; i < 96; i++) 
 //        for(int i = 8; i < 96; i++) 
-
         {
             strips[strip][i] = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
             colorIndex += 3;
@@ -371,7 +411,6 @@ void scrollPaletteUp(int strip, int velocity)
             strips[strip][i] = ColorFromPalette( currentPalette, colorIndex2, brightness, LINEARBLEND);
             colorIndex2 += 3;
         }
-
     }
     FastLED.show();
 }
@@ -442,10 +481,10 @@ void whiteOut(int velocity)
 {
   float wave = beatsin8(bpm / 16, 44, 200);
   float wave2 = beatsin8(bpm / 8, 44, 200);
-  fill_palette(strips[0], num_leds, wave2, 0, WhiteoutPalette, wave, NOBLEND);
-  fill_palette(strips[1], num_leds, wave2, 0, WhiteoutPalette, wave, NOBLEND);
-  fill_palette(strips[2], num_leds, wave2, 0, WhiteoutPalette, wave, NOBLEND);
-  fill_palette(strips[3], num_leds, wave2, 0, WhiteoutPalette, wave, NOBLEND);
+  fill_palette(strips[0], num_leds, wave2, 0, autumnPalette, wave, NOBLEND);
+  fill_palette(strips[1], num_leds, wave2, 0, autumnPalette, wave, NOBLEND);
+  fill_palette(strips[2], num_leds, wave2, 0, autumnPalette, wave, NOBLEND);
+  fill_palette(strips[3], num_leds, wave2, 0, autumnPalette, wave, NOBLEND);
   FastLED.show(); 
 }
 
@@ -638,7 +677,7 @@ void openyourmindGlobal(int velocity)
     startIndex = startIndex + 1; /* motion speed */
     uint8_t colorIndex = startIndex;
     uint8_t colorIndex2 = startIndex;
-    uint8_t brightness = 100;
+    uint8_t brightness = 255;
    //left
     for(int i = 8; i > -1; i--)
     {
