@@ -282,7 +282,7 @@ void readNotes()
 void circle(int strip, int velocity)
 {
   uint8_t sawBeat = beat8(bpm);
-  uint8_t wave1 = map(sawBeat, 0, 255, 0, num_leds - 1);
+  int wave1 = map(sawBeat, 0, 255, 0, num_leds - 1);
   //int wave2 = map(sawBeat, 0, 255, num_leds - 1, 0);
   auto hue = ColorFromPalette(rainbowPalette, map(velocity, 0, 127, 0, 255), 250, NOBLEND);
   strips[strip][wave1] = hue;
@@ -537,14 +537,20 @@ void breatheGlobal(int velocity)
 
 void bounceGlobal(int velocity)
 {
-  uint8_t left = beatsin8(bpm, 19, 84, 0, 0);
-  uint8_t right = map(left, 19, 84, 169, 103);
+  uint8_t sawBeat = beatsin8(bpm);
   CRGB color = ColorFromPalette(rainbowPalette, map(velocity, 0, 127, 0, 255), 250, NOBLEND);
-  for (auto strip : strips)
-  {
-    strip[left] = color;
-    strip[right] = color;
-  }
+  int left = map(sawBeat, 0, 255, 19, 85);
+  int right = map(sawBeat, 0, 255, 169, 103);
+ 
+  strips[0][left] = color;
+  strips[0][right] = color;
+  strips[1][left] = color;
+  strips[1][right] = color;
+  strips[2][left] = color;
+  strips[2][right] = color;
+  strips[3][left] = color;
+  strips[3][right] = color;
+
   FastLED.show();
   fadeStrips();
 }
@@ -553,12 +559,17 @@ void crossGlobal(int velocity)
 {
   uint8_t wave1 = beatsin8(bpm / 2, 0, 169, 0, 0);
   uint8_t wave2 = beatsin8(bpm / 2, 0, 169, 0, 84);
-  CRGB c = ColorFromPalette(rainbowPalette, map(velocity, 0, 127, 0, 255), 250, NOBLEND);
-  for (auto strip : strips)
-  {
-    strip[wave1] = c;
-    strip[wave2] = c;
-  }
+  CRGB color = ColorFromPalette(rainbowPalette, map(velocity, 0, 127, 0, 255), 250, NOBLEND);
+
+  strips[0][wave1] = color;
+  strips[0][wave2] = color;
+  strips[1][wave1] = color;
+  strips[1][wave2] = color;
+  strips[2][wave1] = color;
+  strips[2][wave2] = color;
+  strips[3][wave1] = color;
+  strips[3][wave2] = color;
+
   FastLED.show();
   fadeStrips();
 }
@@ -605,10 +616,11 @@ void juggleGlobal(int velocity)
   for( int i = 0; i < 8; i++)
   {
     uint8_t beat = beatsin16( i+7, 0, num_leds-1 );
-    strips[0][beat] |= ColorFromPalette(palettes[palette], dothue, 250);
-    strips[1][beat] |= ColorFromPalette(palettes[palette], dothue, 250);
-    strips[2][beat] |= ColorFromPalette(palettes[palette], dothue, 250);
-    strips[3][beat] |= ColorFromPalette(palettes[palette], dothue, 250);
+    CRGB color = ColorFromPalette(palettes[palette], dothue, 250);
+    strips[0][beat] |= color;
+    strips[1][beat] |= color;
+    strips[2][beat] |= color;
+    strips[3][beat] |= color;
     dothue += 26;
   }
   
@@ -628,10 +640,11 @@ void scrollPaletteLeftGlobal(int velocity)
 
         for( int i = 0; i < num_leds; i++) 
         {
-            strips[0][i] = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
-            strips[1][i] = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
-            strips[2][i] = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
-            strips[3][i] = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
+            CRGB color = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
+            strips[0][i] = color;
+            strips[1][i] = color;
+            strips[2][i] = color;
+            strips[3][i] = color;
             colorIndex += 3;
         }
     }
@@ -651,10 +664,11 @@ void scrollPaletteRightGlobal(int velocity)
 
         for( int i = num_leds; i > 0; i--) 
         {
-            strips[0][i] = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
-            strips[1][i] = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
-            strips[2][i] = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
-            strips[3][i] = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
+            CRGB color = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
+            strips[0][i] = color;
+            strips[1][i] = color;
+            strips[2][i] = color;
+            strips[3][i] = color;
             colorIndex += 3;
         }
     }
@@ -675,35 +689,39 @@ void scrollPaletteUpGlobal(int velocity)
 
         for(int i=19;i<96;i++) 
         {
-            strips[0][i] = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
-            strips[1][i] = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
-            strips[2][i] = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
-            strips[3][i] = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
+            CRGB color = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
+            strips[0][i] = color;
+            strips[1][i] = color;
+            strips[2][i] = color;
+            strips[3][i] = color;
             colorIndex += 3;
         }
                 
         for(int i=8;i<17;i++)
         {
-            strips[0][i] = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
-            strips[1][i] = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
-            strips[2][i] = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
-            strips[3][i] = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
+            CRGB color = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
+            strips[0][i] = color;
+            strips[1][i] = color;
+            strips[2][i] = color;
+            strips[3][i] = color;
             colorIndex += 3;
         }
         for(int i=169;i>95;i--) 
         {
-            strips[0][i] = ColorFromPalette( currentPalette, colorIndex2, brightness, LINEARBLEND);
-            strips[1][i] = ColorFromPalette( currentPalette, colorIndex2, brightness, LINEARBLEND);
-            strips[2][i] = ColorFromPalette( currentPalette, colorIndex2, brightness, LINEARBLEND);
-            strips[3][i] = ColorFromPalette( currentPalette, colorIndex2, brightness, LINEARBLEND);
+            CRGB color = ColorFromPalette( currentPalette, colorIndex2, brightness, LINEARBLEND);
+            strips[0][i] = color;
+            strips[1][i] = color;
+            strips[2][i] = color;
+            strips[3][i] = color;
             colorIndex2 += 3;
         }
         for(int i=9;i>0;i--)
         {
-            strips[0][i] = ColorFromPalette( currentPalette, colorIndex2, brightness, LINEARBLEND);
-            strips[1][i] = ColorFromPalette( currentPalette, colorIndex2, brightness, LINEARBLEND);
-            strips[2][i] = ColorFromPalette( currentPalette, colorIndex2, brightness, LINEARBLEND);
-            strips[3][i] = ColorFromPalette( currentPalette, colorIndex2, brightness, LINEARBLEND);
+            CRGB color = ColorFromPalette( currentPalette, colorIndex2, brightness, LINEARBLEND);
+            strips[0][i] = color;
+            strips[1][i] = color;
+            strips[2][i] = color;
+            strips[3][i] = color;
             colorIndex2 += 3;
         }
 
@@ -725,57 +743,62 @@ void openyourmindGlobal(int velocity)
    //left
     for(int i = 8; i > -1; i--)
     {
-        strips[0][i] = ColorFromPalette( currentPalette, colorIndex2, brightness, LINEARBLEND);
-        strips[1][i] = ColorFromPalette( currentPalette, colorIndex2, brightness, LINEARBLEND);
-        strips[2][i] = ColorFromPalette( currentPalette, colorIndex2, brightness, LINEARBLEND);
-        strips[3][i] = ColorFromPalette( currentPalette, colorIndex2, brightness, LINEARBLEND);
+        CRGB color = ColorFromPalette( currentPalette, colorIndex2, brightness, LINEARBLEND);
+        strips[0][i] = color;
+        strips[1][i] = color;
+        strips[2][i] = color;
+        strips[3][i] = color;
         colorIndex2 += 3;
     }
     for(int i = 169; i > 135; i--) 
     {
-        strips[0][i] = ColorFromPalette( currentPalette, colorIndex2, brightness, LINEARBLEND);
-        strips[1][i] = ColorFromPalette( currentPalette, colorIndex2, brightness, LINEARBLEND);
-        strips[2][i] = ColorFromPalette( currentPalette, colorIndex2, brightness, LINEARBLEND);
-        strips[3][i] = ColorFromPalette( currentPalette, colorIndex2, brightness, LINEARBLEND);
+        CRGB color = ColorFromPalette( currentPalette, colorIndex2, brightness, LINEARBLEND);
+        strips[0][i] = color;
+        strips[1][i] = color;
+        strips[2][i] = color;
+        strips[3][i] = color;
         colorIndex2 += 3;
     }
     for(int i = 94; i < 136; i++) 
     {
-        strips[0][i] = ColorFromPalette( currentPalette, colorIndex2, brightness, LINEARBLEND);
-        strips[1][i] = ColorFromPalette( currentPalette, colorIndex2, brightness, LINEARBLEND);
-        strips[2][i] = ColorFromPalette( currentPalette, colorIndex2, brightness, LINEARBLEND);
-        strips[3][i] = ColorFromPalette( currentPalette, colorIndex2, brightness, LINEARBLEND);
+        CRGB color = ColorFromPalette( currentPalette, colorIndex2, brightness, LINEARBLEND);
+        strips[0][i] = color;
+        strips[1][i] = color;
+        strips[2][i] = color;
+        strips[3][i] = color;
         colorIndex2 += 3;
     }
        
     //right
     for(int i = 9; i <18; i++)
     {
-        strips[0][i] = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
-        strips[1][i] = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
-        strips[2][i] = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
-        strips[3][i] = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
+        CRGB color = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
+        strips[0][i] = color;
+        strips[1][i] = color;
+        strips[2][i] = color;
+        strips[3][i] = color;
         colorIndex += 3;
     }
     for(int i = 18; i < 51; i++) 
     {
-        strips[0][i] = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
-        strips[1][i] = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
-        strips[2][i] = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
-        strips[3][i] = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
+        CRGB color = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
+        strips[0][i] = color;
+        strips[1][i] = color;
+        strips[2][i] = color;
+        strips[3][i] = color;
         colorIndex += 3;
     }
     for(int i = 93; i > 51; i--) 
     {
-        strips[0][i] = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
-        strips[1][i] = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
-        strips[2][i] = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
-        strips[3][i] = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
+        CRGB color = ColorFromPalette( currentPalette, colorIndex, brightness, LINEARBLEND);
+        strips[0][i] = color;
+        strips[1][i] = color;
+        strips[2][i] = color;
+        strips[3][i] = color;
         colorIndex += 3;
     }
-
+    FastLED.show();
   }
-  FastLED.show();
 }
 
 
